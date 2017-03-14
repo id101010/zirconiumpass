@@ -1,29 +1,35 @@
-# Compiled Object files
+# Can also ignore all directories and files in a directory.
+build/
+doc/
+
+# C++ objects and libs
+
 *.slo
 *.lo
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
-*.lib
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
 
-# Executables
-*.exe
-*.out
-*.app
+# Qt-es
+
+*.pro.user
+*.pro.user.*
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.rc
+Makefile
+*.Debug
+*.Release
+*-build-*
+*.autosave
+*~
+*.backup
+*.qmake.stash
+*.DS_Store
+target_wrapper.sh
+uic_wrapper.sh
