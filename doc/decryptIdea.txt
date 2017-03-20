@@ -1,0 +1,8 @@
+
+cryptedvalue::decrypt(  func ( string)   ) {
+     
+    decrypt into temp memory
+    func( decrypted pw)
+    overwrite with zerooos
+    free
+}
