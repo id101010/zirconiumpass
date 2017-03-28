@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    database.cpp \
-    masterkey.cpp
+        database.cpp \
+        masterkey.cpp
 
-HEADERS  += mainwindow.h \
-    database.h \
-    masterkey.h
+HEADERS += mainwindow.h \
+        database.h \
+        masterkey.h
 
-FORMS    += mainwindow.ui
+FORMS += mainwindow.ui
+
+LIBS += -lcryptopp
