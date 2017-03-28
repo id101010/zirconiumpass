@@ -31,5 +31,3 @@ bool Database::encrypt()
 {
 
 }
-
-Database::
