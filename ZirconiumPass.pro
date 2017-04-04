@@ -26,12 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
         database.cpp \
-        masterkey.cpp
+        masterkey.cpp \
+    databaseopendialog.cpp
 
 HEADERS += mainwindow.h \
         database.h \
-        masterkey.h
+        masterkey.h \
+    databaseopendialog.h
 
-FORMS += mainwindow.ui
+FORMS += mainwindow.ui \
+    databaseopendialog.ui
 
 LIBS += -lcryptopp
