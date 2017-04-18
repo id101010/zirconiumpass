@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include <QFile>
 #include <QDebug>
+#include "crypto/Random.h"
 
 static const int VERSION = 1;
 
@@ -64,12 +65,17 @@ Database Database::createNew(QString password, int rounds)
 {
     Database d; // create new database
 
-    d.mTransformSeed = QByteArray(); // read transform seed
-    d.mMasterSeed = QByteArray(); // read master seed
+    //Props for generating the masterkey out of the password
+    d.mTransformSeed =  randomGen()->randomArray(32);
+    d.mTransformRounds = rounds; // read number of transform rounds
+    d.mMasterSeed =  randomGen()->randomArray(32);
+
+
+
     d.mEncryptionIv = QByteArray(); // read ecryption initialisation vector
     d.mStreamStartBytes = QByteArray(); // read stream start bytes
     d.mProtectedStreamKey = QByteArray(); // read protected stream key
-    d.mTransformRounds = rounds; // read number of transform rounds
+
 
     d.mMasterKey = Masterkey(); // Initialize masterkey object
     bool keycheck = d.mMasterKey.deriveKey(password, d.mTransformSeed, d.mTransformRounds, d.mMasterSeed); // derive key
@@ -89,6 +95,19 @@ Database Database::createNew(QString password, int rounds)
 bool Database::decrypt(QString password)
 {
 
+    mMasterKey = Masterkey(); // Initialize masterkey object
+    bool keycheck = mMasterKey.deriveKey(password, mTransformSeed, mTransformRounds, mMasterSeed); // derive key
+
+    // Check if master key was derived properly
+    if(!keycheck){
+        qDebug() << "Master key derivation failed!";
+        return false;
+    }
+
+    //TODO: implement decryption
+
+
+    return true;
 }
 
 /**
@@ -117,6 +136,8 @@ bool Database::write(QString filename)
     out << mTransformRounds; // Write number of transform rounds
 
     file.close();
+
+    return true;
 }
 
 /**

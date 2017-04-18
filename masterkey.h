@@ -13,7 +13,7 @@ class Masterkey
                         int transformRounds,
                         QByteArray masterSeed);
     private:
-        QByteArray m_key;
+        QByteArray mKey;
 };
 
 #endif // MASTERKEY_H

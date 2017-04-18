@@ -3,20 +3,32 @@
 #include "mainwindow.h"
 #include "database.h"
 #include "databaseopendialog.h"
+#include "crypto/Crypto.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    //MainWindow w;
-    DatabaseOpenDialog dialog;
+    if(!Crypto::init()) {
+        qCritical() << "Could not initialize crypto";
+    }
 
-    dialog.exec();
-    //w.show();
-
-    Database d = Database::createNew("test", 20);
-    d.write("test.db");
+    Database d = Database::createNew("passw0rd");
+    Q_ASSERT(d.write("test.db"));
+    qDebug() << "ok encrypt & write";
 
     Database r = Database::createFromFile("test.db");
 
-    return a.exec();
+    Q_ASSERT(r.decrypt("passw0rd"));
+    qDebug() << "ok read & decrypt";
+
+
+
+
+    //QApplication a(argc, argv);
+    //MainWindow w;
+    // w.show();
+
+    //DatabaseOpenDialog dialog;
+    //dialog.exec();
+    //return a.exec();
 }

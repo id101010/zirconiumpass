@@ -8,7 +8,7 @@ class Database
 {
     public:
         static Database createFromFile(QString filename);
-        static Database createNew(QString password, int rounds);
+        static Database createNew(QString password, int rounds = 100000);
         bool decrypt(QString password);
         bool write(QString filename);
 

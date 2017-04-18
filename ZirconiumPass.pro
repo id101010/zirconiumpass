@@ -27,14 +27,39 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         database.cpp \
         masterkey.cpp \
-    databaseopendialog.cpp
+    databaseopendialog.cpp \
+    databasecontent.cpp
 
 HEADERS += mainwindow.h \
         database.h \
         masterkey.h \
-    databaseopendialog.h
+    databaseopendialog.h \
+    databasecontent.h
 
 FORMS += mainwindow.ui \
     databaseopendialog.ui
 
-LIBS += -lcryptopp
+
+# Crypto stuff from KeepassXC ahead
+
+SOURCES +=  crypto/CryptoHash.cpp \
+            crypto/Random.cpp \
+            crypto/SymmetricCipherGcrypt.cpp \
+            crypto/Uuid.cpp \
+            crypto/Crypto.cpp \
+            crypto/SymmetricCipher.cpp
+            #crypto/SymmetricCipherSalsa20.cpp \
+
+
+HEADERS+=   crypto/Crypto.h \
+            crypto/CryptoHash.h \
+            crypto/Random.h \
+            crypto/SymmetricCipherBackend.h \
+            crypto/SymmetricCipherGcrypt.h \
+            crypto/SymmetricCipher.h \
+            crypto/Uuid.h
+#            crypto/SymmetricCipherSalsa20.h \
+
+LIBS+= -lgcrypt
+
+
