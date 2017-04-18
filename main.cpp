@@ -1,16 +1,17 @@
-#include "mainwindow.h"
 #include <QApplication>
+
+#include "mainwindow.h"
 #include "database.h"
 #include "databaseopendialog.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    //MainWindow w;
     DatabaseOpenDialog dialog;
 
-    dialog.show();
-    w.show();
+    dialog.exec();
+    //w.show();
 
     Database d = Database::createNew("test", 20);
     d.write("test.db");
