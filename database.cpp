@@ -15,7 +15,7 @@ Database::Database()
 /**
  * Decrypt and parse a pass database stored as file
  **/
-Database Database::create_from_file(QString filename)
+Database Database::createFromFile(QString filename)
 {
     char magic[14]; // magic number
     qint32 version; // version
@@ -45,12 +45,12 @@ Database Database::create_from_file(QString filename)
 
     // Create new database and read header data from file
     Database d;
-    in >> d.m_transform_seed; // read transform seed
-    in >> d.m_master_seed; // read master seed
-    in >> d.m_encryption_iv; // read ecryption initialisation vector
-    in >> d.m_stream_start_bytes; // read stream start bytes (offset)
-    in >> d.m_protected_stream_key; // read protected stream key
-    in >> d.m_transform_rounds; // read number of transform rounds
+    in >> d.mTransformSeed; // read transform seed
+    in >> d.mMasterSeed; // read master seed
+    in >> d.mEncryptionIv; // read ecryption initialisation vector
+    in >> d.mStreamStartBytes; // read stream start bytes (check)
+    in >> d.mProtectedStreamKey; // read protected stream key
+    in >> d.mTransformRounds; // read number of transform rounds
 
     file.close();
 
@@ -60,19 +60,19 @@ Database Database::create_from_file(QString filename)
 /**
  * Create a new, empty and initialized database object
  **/
-Database Database::create_new(QString password, int rounds)
+Database Database::createNew(QString password, int rounds)
 {
     Database d; // create new database
 
-    d.m_transform_seed = QByteArray(); // read transform seed
-    d.m_master_seed = QByteArray(); // read master seed
-    d.m_encryption_iv = QByteArray(); // read ecryption initialisation vector
-    d.m_stream_start_bytes = QByteArray(); // read stream start bytes
-    d.m_protected_stream_key = QByteArray(); // read protected stream key
-    d.m_transform_rounds = rounds; // read number of transform rounds
+    d.mTransformSeed = QByteArray(); // read transform seed
+    d.mMasterSeed = QByteArray(); // read master seed
+    d.mEncryptionIv = QByteArray(); // read ecryption initialisation vector
+    d.mStreamStartBytes = QByteArray(); // read stream start bytes
+    d.mProtectedStreamKey = QByteArray(); // read protected stream key
+    d.mTransformRounds = rounds; // read number of transform rounds
 
-    d.m_master_key = Masterkey(); // Initialize masterkey object
-    bool keycheck = d.m_master_key.derive_key(password, d.m_transform_seed, d.m_transform_rounds, d.m_master_seed); // derive key
+    d.mMasterKey = Masterkey(); // Initialize masterkey object
+    bool keycheck = d.mMasterKey.deriveKey(password, d.mTransformSeed, d.mTransformRounds, d.mMasterSeed); // derive key
 
     // Check if master key was derived properly
     if(!keycheck){
@@ -109,12 +109,12 @@ bool Database::write(QString filename)
     // Write a header with a "magic number" and a version
     out.writeRawData("zirconiumpass", 14); // Magic bytes: 697a 6b72 6e6f 7569 706d 7361 0073
     out << (qint32)VERSION; // Write version
-    out << m_transform_seed; // Write transform seed
-    out << m_master_seed; // Write master seed
-    out << m_encryption_iv; // Write ecryption initialisation vector
-    out << m_stream_start_bytes; // Write stream start bytes (offset)
-    out << m_protected_stream_key; // Write protected stream key
-    out << m_transform_rounds; // Write number of transform rounds
+    out << mTransformSeed; // Write transform seed
+    out << mMasterSeed; // Write master seed
+    out << mEncryptionIv; // Write ecryption initialisation vector
+    out << mStreamStartBytes; // Write stream start bytes (offset)
+    out << mProtectedStreamKey; // Write protected stream key
+    out << mTransformRounds; // Write number of transform rounds
 
     file.close();
 }

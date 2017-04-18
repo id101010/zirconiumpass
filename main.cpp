@@ -10,12 +10,12 @@ int main(int argc, char *argv[])
     DatabaseOpenDialog dialog;
 
     dialog.show();
-    //w.show();
+    w.show();
 
-    Database d = Database::create_new("test", 20);
+    Database d = Database::createNew("test", 20);
     d.write("test.db");
 
-    Database r = Database::create_from_file("test.db");
+    Database r = Database::createFromFile("test.db");
 
     return a.exec();
 }

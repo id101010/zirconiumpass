@@ -8,10 +8,10 @@ class Masterkey
 {
     public:
         Masterkey();
-        bool derive_key(QString password,
-                        QByteArray transform_seed,
-                        int transform_rounds,
-                        QByteArray master_seed);
+        bool deriveKey(QString password,
+                        QByteArray transformSeed,
+                        int transformRounds,
+                        QByteArray masterSeed);
     private:
         QByteArray m_key;
 };

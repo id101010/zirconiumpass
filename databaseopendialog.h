@@ -16,13 +16,15 @@ public:
     ~DatabaseOpenDialog();
 
 private slots:
-
     void on_btnDatabase_clicked();
-
     void on_btnShow_clicked();
 
 private:
     Ui::DatabaseOpenDialog *ui;
+
+    // QDialog interface
+public slots:
+    void accept();
 };
 
 #endif // DATABASEOPENDIALOG_H
