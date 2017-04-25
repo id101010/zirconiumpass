@@ -68,4 +68,52 @@ void TestDatabase::testSingleEntryCreateLoad()
 
 }
 
+void TestDatabase::testMultiEntryCreateLoad()
+{
+    Database d = Database::createNew("StrongPassw0rd");
+    d.setFactory(factory);
+    QVERIFY(d.databaseContent().entires().isEmpty());
+
+    //Create multiple dummy entries
+    QVector<DummyEntry*> dummies;
+    for(int i=0; i<10; i++) {
+        QJsonObject obj;
+        obj["a"]= qrand();
+        obj["b"] = qrand()/13.9+qrand();
+        DummyEntry* dummy = new DummyEntry();
+        dummy->jsonobject = obj;
+        dummies.append(dummy);
+        d.databaseContent().addEntry(dummy);
+        QCOMPARE(d.databaseContent().entires().length(),i+1);
+        QVERIFY(d.databaseContent().entires().contains(dummy));
+    }
+
+    //Write Db.
+    QVERIFY(d.write("test.db"));
+
+    //Read db back in
+    Database r = Database::createFromFile("test.db");
+    r.setFactory(factory);
+    QVERIFY(r.decrypt("StrongPassw0rd"));
+
+
+    //Check that data was correctly restored
+    QCOMPARE(r.databaseContent().entires().length(),dummies.length());
+    for(int i=0; i<dummies.length(); i++) {
+       JsonSerializable* entryRestored = r.databaseContent().entires()[i];
+       DummyEntry* dummyEntryRestored = static_cast<DummyEntry*>(entryRestored);
+       DummyEntry* dummyOriginal = dummies[i];
+       QCOMPARE(dummyEntryRestored->jsonobject,dummyOriginal->jsonobject);
+
+    }
+
+    //Now decrypt with wrong password and check if db content is empty
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Invalid padding.*"));
+    QVERIFY(!r.decrypt("WRONGpassw0rd"));
+    QVERIFY(r.databaseContent().entires().isEmpty());
+
+    qDeleteAll(dummies);
+
+}
+
 QTEST_APPLESS_MAIN(TestDatabase)

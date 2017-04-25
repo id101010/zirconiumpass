@@ -17,6 +17,7 @@ private slots:
     void initTestCase();
     void testEmptyCreateLoad();
     void testSingleEntryCreateLoad();
+    void testMultiEntryCreateLoad();
 
 private:
     QSharedPointer<DatabaseFactory> factory;
