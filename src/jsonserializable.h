@@ -5,7 +5,7 @@
 
 class JsonSerializable {
 public:
-    virtual ~JsonSerializable() = 0;
+    virtual ~JsonSerializable() = default;
     virtual QJsonObject saveToJson() const = 0 ;
     virtual bool loadFromJson(const QJsonObject& obj) = 0;
 

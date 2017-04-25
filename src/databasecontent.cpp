@@ -41,6 +41,8 @@ bool DatabaseContent::decrypt(const Masterkey &masterkey)
         return false;
     }
 
+    mEntries.clear();
+
     QByteArray plain;
     if(!masterkey.decrypt(mEncryptionIv,mCrypted,plain)) {
         return false;
@@ -63,7 +65,6 @@ bool DatabaseContent::decrypt(const Masterkey &masterkey)
     }
 
     // Step 3: Convert Json Document into Vector of Entries
-    mEntries.clear();
 
     const QJsonArray arr = doc.array();
     for(const QJsonValue val: arr) {

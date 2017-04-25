@@ -51,7 +51,7 @@ bool Masterkey::deriveKey(QString password, QByteArray transformSeed, int transf
     hash.addData(transformKey);
     mKey = hash.result();
 
-    qDebug() << "masterkey"  << mKey.toHex();
+    //qDebug() << "masterkey"  << mKey.toHex();
 
     return true;
 }
