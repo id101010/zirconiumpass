@@ -8,7 +8,7 @@
 
 static const int VERSION = 1;
 
-Database::Database()
+Database::Database() : mDatabaseContent(QSharedPointer<DatabaseFactory>::create())
 {
 
 }
@@ -59,7 +59,6 @@ Database Database::createFromFile(QString filename)
     file.close();
 
 
-    d.mDatabaseContent = DatabaseContent();
     d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
     d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
     d.mDatabaseContent.setCrypted(crypted);
@@ -95,7 +94,6 @@ Database Database::createNew(QString password, int rounds)
         return Database();
     }
 
-    d.mDatabaseContent = DatabaseContent();
     d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
     d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
 
@@ -156,6 +154,21 @@ bool Database::write(QString filename)
     file.close();
 
     return true;
+}
+
+DatabaseContent &Database::databaseContent()
+{
+    return mDatabaseContent;
+}
+
+const DatabaseContent &Database::databaseContent() const
+{
+    return mDatabaseContent;
+}
+
+void Database::setFactory(QSharedPointer<DatabaseFactory> factory)
+{
+    mDatabaseContent.setFactory(factory);
 }
 
 /**

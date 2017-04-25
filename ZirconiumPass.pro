@@ -27,17 +27,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         database.cpp \
         masterkey.cpp \
-    databaseopendialog.cpp \
-    databasecontent.cpp
+        databaseopendialog.cpp \
+        databasecontent.cpp
 
 HEADERS += mainwindow.h \
         database.h \
         masterkey.h \
-    databaseopendialog.h \
-    databasecontent.h
+        databaseopendialog.h \
+        databasecontent.h \
+        jsonserializable.h
 
 FORMS += mainwindow.ui \
-    databaseopendialog.ui
+         databaseopendialog.ui
 
 
 # Crypto stuff from KeepassXC ahead

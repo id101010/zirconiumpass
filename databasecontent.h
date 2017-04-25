@@ -3,13 +3,19 @@
 
 #include "masterkey.h"
 #include <QVector>
+#include <QSharedPointer>
+#include <jsonserializable.h>
 
-class Entry;
+
+struct DatabaseFactory {
+    virtual ~DatabaseFactory();
+    virtual JsonSerializable* createEntry();
+};
 
 class DatabaseContent
 {
 public:
-    DatabaseContent();
+    DatabaseContent(QSharedPointer<DatabaseFactory> factory);
     bool encrypt(const Masterkey& masterkey);
     bool decrypt(const Masterkey& masterkey);
     bool containsDecryptedData() const;
@@ -23,13 +29,17 @@ public:
     QByteArray encryptionIv() const;
     QByteArray streamStartBytes() const;
 
-    const QVector<Entry*>& entires() const;
-    void addEntry(Entry* entry);
-    void removeEntry(Entry* entry);
+    const QVector<JsonSerializable*>& entires() const;
+    void addEntry(JsonSerializable* entry);
+    void removeEntry(JsonSerializable* entry);
 
+
+
+    void setFactory(QSharedPointer<DatabaseFactory> factory); //for testing purposes
 
  private:
-    QVector<Entry*> mEntries;
+    QSharedPointer<DatabaseFactory> mFactory;
+    QVector<JsonSerializable*> mEntries;
     QByteArray mCrypted;
     QByteArray mEncryptionIv;
     QByteArray mStreamStartBytes;

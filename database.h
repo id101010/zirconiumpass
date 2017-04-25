@@ -5,6 +5,10 @@
 #include "databasecontent.h"
 #include <QString>
 
+
+
+
+
 class Database
 {
     public:
@@ -12,6 +16,11 @@ class Database
         static Database createNew(QString password, int rounds = 100000);
         bool decrypt(QString password);
         bool write(QString filename);
+
+        DatabaseContent& databaseContent();
+        const DatabaseContent& databaseContent() const;
+
+        void setFactory(QSharedPointer<DatabaseFactory> factory);
 
     private:
         Database();
