@@ -47,7 +47,11 @@ SOURCES +=  crypto/CryptoHash.cpp \
             crypto/SymmetricCipherGcrypt.cpp \
             crypto/Uuid.cpp \
             crypto/Crypto.cpp \
-            crypto/SymmetricCipher.cpp
+            crypto/SymmetricCipher.cpp \
+            crypto/SymmetricCipherStream.cpp \
+            crypto/LayeredStream.cpp
+
+
             #crypto/SymmetricCipherSalsa20.cpp \
 
 
@@ -57,7 +61,9 @@ HEADERS+=   crypto/Crypto.h \
             crypto/SymmetricCipherBackend.h \
             crypto/SymmetricCipherGcrypt.h \
             crypto/SymmetricCipher.h \
-            crypto/Uuid.h
+            crypto/Uuid.h \
+            crypto/SymmetricCipherStream.h \
+            crypto/LayeredStream.h
 #            crypto/SymmetricCipherSalsa20.h \
 
 LIBS+= -lgcrypt

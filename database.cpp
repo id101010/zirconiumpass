@@ -53,7 +53,16 @@ Database Database::createFromFile(QString filename)
     in >> d.mProtectedStreamKey; // read protected stream key
     in >> d.mTransformRounds; // read number of transform rounds
 
+    QByteArray crypted;
+    in >> crypted;
+
     file.close();
+
+
+    d.mDatabaseContent = DatabaseContent();
+    d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
+    d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
+    d.mDatabaseContent.setCrypted(crypted);
 
     return d;
 }
@@ -72,9 +81,9 @@ Database Database::createNew(QString password, int rounds)
 
 
 
-    d.mEncryptionIv = QByteArray(); // read ecryption initialisation vector
-    d.mStreamStartBytes = QByteArray(); // read stream start bytes
-    d.mProtectedStreamKey = QByteArray(); // read protected stream key
+    d.mEncryptionIv = randomGen()->randomArray(16);
+    d.mStreamStartBytes = randomGen()->randomArray(32);
+    d.mProtectedStreamKey = randomGen()->randomArray(32);
 
 
     d.mMasterKey = Masterkey(); // Initialize masterkey object
@@ -85,6 +94,10 @@ Database Database::createNew(QString password, int rounds)
         qDebug() << "Master key derivation failed!";
         return Database();
     }
+
+    d.mDatabaseContent = DatabaseContent();
+    d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
+    d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
 
     return d;
 }
@@ -104,10 +117,8 @@ bool Database::decrypt(QString password)
         return false;
     }
 
-    //TODO: implement decryption
+    return mDatabaseContent.decrypt(mMasterKey);
 
-
-    return true;
 }
 
 /**
@@ -115,6 +126,11 @@ bool Database::decrypt(QString password)
  **/
 bool Database::write(QString filename)
 {
+
+    if(!encrypt()) {
+        return false;
+    }
+
     QFile file(filename); // Create a file object from filename
 
     // Open file as truncate and write only and check if file is opened
@@ -135,6 +151,8 @@ bool Database::write(QString filename)
     out << mProtectedStreamKey; // Write protected stream key
     out << mTransformRounds; // Write number of transform rounds
 
+    out << mDatabaseContent.crypted();
+
     file.close();
 
     return true;
@@ -145,5 +163,5 @@ bool Database::write(QString filename)
  **/
 bool Database::encrypt()
 {
-
+    return mDatabaseContent.encrypt(mMasterKey);
 }

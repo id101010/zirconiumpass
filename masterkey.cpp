@@ -1,7 +1,8 @@
 #include "masterkey.h"
 #include "crypto/CryptoHash.h"
-#include "crypto/SymmetricCipher.h"
+#include "crypto/SymmetricCipherStream.h"
 #include <QDebug>
+#include <QBuffer>
 
 Masterkey::Masterkey()
 {
@@ -51,6 +52,67 @@ bool Masterkey::deriveKey(QString password, QByteArray transformSeed, int transf
     mKey = hash.result();
 
     qDebug() << "masterkey"  << mKey.toHex();
+
+    return true;
+}
+
+bool Masterkey::encrypt(const QByteArray& iv, const QByteArray& content, QByteArray& outEncrypted) const
+{
+    QBuffer buf(&outEncrypted);
+    if(!buf.open(QIODevice::WriteOnly)) {
+        return false;
+    }
+
+    SymmetricCipherStream stream(&buf,SymmetricCipher::Aes256,SymmetricCipher::Cbc, SymmetricCipher::Encrypt);
+    if(!stream.init(mKey,iv)) {
+        qWarning() << stream.errorString();
+        return false;
+    }
+
+    if(!stream.open(QIODevice::WriteOnly)) {
+        qWarning() << stream.errorString();
+        return false;
+    }
+
+    if(stream.write(content) == -1) {
+        qWarning() << stream.errorString();
+        outEncrypted.clear();
+        return false;
+    }
+
+    stream.close();
+    buf.close();
+    return true;
+}
+
+
+bool Masterkey::decrypt(const QByteArray& iv, const QByteArray& encryptedContent, QByteArray& outDecrypted) const
+{
+    QBuffer buf;
+    buf.setData(encryptedContent);
+    if(!buf.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    SymmetricCipherStream stream(&buf,SymmetricCipher::Aes256,SymmetricCipher::Cbc, SymmetricCipher::Decrypt);
+    if(!stream.init(mKey,iv)) {
+        qWarning() << stream.errorString();
+        return false;
+    }
+
+    if(!stream.open(QIODevice::ReadOnly)) {
+        qWarning() << stream.errorString();
+        return false;
+    }
+
+    outDecrypted = stream.readAll();
+    if(outDecrypted.isEmpty()) {
+        qWarning() << stream.errorString();
+        return false;
+    }
+
+    stream.close();
+    buf.close();
 
     return true;
 }

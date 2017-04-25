@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include "masterkey.h"
+#include "databasecontent.h"
 #include <QString>
 
 class Database
@@ -22,6 +23,8 @@ class Database
         QByteArray mProtectedStreamKey;
         int mTransformRounds;
         Masterkey mMasterKey;
+        DatabaseContent mDatabaseContent;
+
 };
 
 #endif // DATABASE_H

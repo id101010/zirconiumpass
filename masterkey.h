@@ -12,6 +12,9 @@ class Masterkey
                         QByteArray transformSeed,
                         int transformRounds,
                         QByteArray masterSeed);
+
+        bool encrypt(const QByteArray& iv, const QByteArray& content, QByteArray& outEncrypted) const;
+        bool decrypt(const QByteArray& iv, const QByteArray& encryptedContent, QByteArray& outDecrypted) const;
     private:
         QByteArray mKey;
 };
