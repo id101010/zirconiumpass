@@ -22,8 +22,11 @@ public slots:
     void openDatabaseClicked();
     void closeDatabaseClicked();
     void createNewDatabaseClicked();
+    void createNewEntryClicked();
+    void tableContextMenuRequested(const QPoint &pos);
 
 private:
+    void editEntry(Entry* entry);
     EntriesTableModel mEntriesModel;
     Ui::MainWindow *ui;
     std::unique_ptr<Database> mDatabase;

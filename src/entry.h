@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QMetaType>
 
 class Entry : public JsonSerializable
 {
@@ -22,5 +23,6 @@ class Entry : public JsonSerializable
     private:
         QString mTitle;
 };
+Q_DECLARE_METATYPE(Entry*)
 
 #endif // ENTRY_H

@@ -3,6 +3,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+#include "entry.h"
 
 DatabaseContent::DatabaseContent(QSharedPointer<DatabaseFactory> factory) : mFactory(factory)
 {
@@ -131,7 +132,7 @@ const QVector<JsonSerializable *> &DatabaseContent::serializables() const
     return mEntries;
 }
 
-const QVector<class Entries*> &DatabaseContent::entries() const
+const QVector<class Entry*> &DatabaseContent::entries() const
 {
     //Warning: Only call this method if you are sure that only Entry* or subclasses of it are in the list
 
@@ -142,19 +143,24 @@ const QVector<class Entries*> &DatabaseContent::entries() const
     //This is why we add a little hack here: Cast the vector of serializable* to a list of Entry*
     //An alternative would be to copy the vector here and do safe-casts. Or do the cast on call-site
 
-    return *reinterpret_cast< const QVector<class Entries *>*>(&mEntries);
+    return *reinterpret_cast< const QVector<class Entry*>*>(&mEntries);
 }
 
 void DatabaseContent::addEntry(JsonSerializable *entry)
 {
     Q_ASSERT(entry!=nullptr);
     mEntries.append(entry);
+    emit entryAdded(mEntries.size()-1);
 }
 
 void DatabaseContent::removeEntry(JsonSerializable *entry)
 {
     Q_ASSERT(entry!=nullptr);
-    mEntries.removeAll(entry);
+    int ind = mEntries.indexOf(entry);
+    if(ind != -1){
+        mEntries.removeAt(ind);
+        emit entryRemoved(ind);
+    }
 }
 
 void DatabaseContent::setFactory(QSharedPointer<DatabaseFactory> factory)
@@ -169,5 +175,5 @@ DatabaseFactory::~DatabaseFactory()
 
 JsonSerializable *DatabaseFactory::createEntry()
 {
-    return nullptr; //TODO: Use actual entry class
+    return new Entry();
 }
