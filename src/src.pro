@@ -19,7 +19,8 @@ SOURCES += mainwindow.cpp \
         entry.cpp \
         abstractvalue.cpp \
         cryptedvalue.cpp \
-        plainvalue.cpp
+        plainvalue.cpp \
+        entrydialog.cpp
 
 HEADERS += mainwindow.h \
         database.h \
@@ -31,10 +32,12 @@ HEADERS += mainwindow.h \
         entry.h \
         abstractvalue.h \
         cryptedvalue.h \
-        plainvalue.h
+        plainvalue.h \
+        entrydialog.h
 
 FORMS += mainwindow.ui \
-         databaseopendialog.ui
+         databaseopendialog.ui \
+         entrydialog.ui
 
 
 # Crypto stuff from KeepassXC ahead

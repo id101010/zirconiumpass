@@ -12,12 +12,11 @@ struct DatabaseFactory {
     virtual JsonSerializable* createEntry();
 };
 
-class DatabaseContent
+class DatabaseContent : public QObject
 {
+    Q_OBJECT
 public:
     DatabaseContent(QSharedPointer<DatabaseFactory> factory);
-    Q_DISABLE_COPY(DatabaseContent)
-
 
     bool encrypt(const Masterkey& masterkey);
     bool decrypt(const Masterkey& masterkey);
@@ -33,7 +32,7 @@ public:
     QByteArray streamStartBytes() const;
 
     const QVector<JsonSerializable*>& serializables() const;
-    const QVector<class Entries*>& entries() const;
+    const QVector<class Entry *> &entries() const;
 
 
     void addEntry(JsonSerializable* entry);
@@ -42,6 +41,10 @@ public:
 
 
     void setFactory(QSharedPointer<DatabaseFactory> factory); //for testing purposes
+
+ signals:
+    void entryAdded(int index);
+    void entryRemoved(int index);
 
  private:
     QSharedPointer<DatabaseFactory> mFactory;
