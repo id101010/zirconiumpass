@@ -16,6 +16,9 @@ class DatabaseContent
 {
 public:
     DatabaseContent(QSharedPointer<DatabaseFactory> factory);
+    Q_DISABLE_COPY(DatabaseContent)
+
+
     bool encrypt(const Masterkey& masterkey);
     bool decrypt(const Masterkey& masterkey);
     bool containsDecryptedData() const;
@@ -29,7 +32,10 @@ public:
     QByteArray encryptionIv() const;
     QByteArray streamStartBytes() const;
 
-    const QVector<JsonSerializable*>& entires() const;
+    const QVector<JsonSerializable*>& serializables() const;
+    const QVector<class Entries*>& entries() const;
+
+
     void addEntry(JsonSerializable* entry);
     void removeEntry(JsonSerializable* entry);
 

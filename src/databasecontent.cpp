@@ -126,9 +126,23 @@ QByteArray DatabaseContent::streamStartBytes() const
     return mStreamStartBytes;
 }
 
-const QVector<JsonSerializable *> &DatabaseContent::entires() const
+const QVector<JsonSerializable *> &DatabaseContent::serializables() const
 {
     return mEntries;
+}
+
+const QVector<class Entries*> &DatabaseContent::entries() const
+{
+    //Warning: Only call this method if you are sure that only Entry* or subclasses of it are in the list
+
+
+    //During normal application operation all serialiables in this list will be of Type Entry
+    //But for a decoupled testing it is easier if we store them as list of serializables.
+
+    //This is why we add a little hack here: Cast the vector of serializable* to a list of Entry*
+    //An alternative would be to copy the vector here and do safe-casts. Or do the cast on call-site
+
+    return *reinterpret_cast< const QVector<class Entries *>*>(&mEntries);
 }
 
 void DatabaseContent::addEntry(JsonSerializable *entry)

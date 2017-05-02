@@ -4,6 +4,7 @@
 #include "masterkey.h"
 #include "databasecontent.h"
 #include <QString>
+#include <memory>
 
 
 
@@ -12,8 +13,8 @@
 class Database
 {
     public:
-        static Database createFromFile(QString filename);
-        static Database createNew(QString password, int rounds = 100000);
+        static std::unique_ptr<Database> createFromFile(QString filename);
+        static std::unique_ptr<Database> createNew(QString password, int rounds = 100000);
         bool decrypt(QString password);
         bool write(QString filename);
 
