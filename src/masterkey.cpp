@@ -9,7 +9,37 @@ Masterkey::Masterkey()
 
 }
 
-bool Masterkey::deriveKey(QString password, QByteArray transformSeed, int transformRounds, QByteArray masterSeed)
+int Masterkey::transformRounds() const
+{
+    return mTransformRounds;
+}
+
+void Masterkey::setTransformRounds(int rounds)
+{
+    mTransformRounds = rounds;
+}
+
+void Masterkey::setTransformSeed(const QByteArray &seed)
+{
+    mTransformSeed = seed;
+}
+
+QByteArray Masterkey::transformSeed() const
+{
+    return mTransformSeed;
+}
+
+void Masterkey::setMasterSeed(const QByteArray &seed)
+{
+    mMasterSeed = seed;
+}
+
+QByteArray Masterkey::masterSeed() const
+{
+    return mMasterSeed;
+}
+
+bool Masterkey::deriveKey(QString password)
 {
     //based on https://gist.github.com/msmuenchen/9318327
 
@@ -19,27 +49,27 @@ bool Masterkey::deriveKey(QString password, QByteArray transformSeed, int transf
 
     SymmetricCipher cipher(SymmetricCipher::Aes256, SymmetricCipher::Ecb,
                            SymmetricCipher::Encrypt);
-    if (!cipher.init(transformSeed, iv)) {
+    if (!cipher.init(mTransformSeed, iv)) {
         qWarning() << cipher.errorString();
         return false;
     }
 
     QByteArray result = key.left(16);
 
-    if (!cipher.processInPlace(result, transformRounds)) {
+    if (!cipher.processInPlace(result, mTransformRounds)) {
         qWarning() << cipher.errorString();
         return false;
     }
 
 
-    if (!cipher.init(transformSeed, iv)) {
+    if (!cipher.init(mTransformSeed, iv)) {
         qWarning() << cipher.errorString();
         return false;
     }
 
     QByteArray result2 = key.right(16);
 
-    if (!cipher.processInPlace(result, transformRounds)) {
+    if (!cipher.processInPlace(result, mTransformRounds)) {
         qWarning() << cipher.errorString();
         return false;
     }
@@ -47,7 +77,7 @@ bool Masterkey::deriveKey(QString password, QByteArray transformSeed, int transf
     QByteArray transformKey = CryptoHash::hash(result + result2, CryptoHash::Sha256);
 
     CryptoHash hash(CryptoHash::Sha256);
-    hash.addData(masterSeed);
+    hash.addData(mMasterSeed);
     hash.addData(transformKey);
     mKey = hash.result();
 

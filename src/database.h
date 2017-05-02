@@ -25,12 +25,7 @@ class Database
     private:
         Database();
         bool encrypt();
-        QByteArray mTransformSeed;
-        QByteArray mMasterSeed;
-        QByteArray mEncryptionIv;
-        QByteArray mStreamStartBytes;
         QByteArray mProtectedStreamKey;
-        int mTransformRounds;
         Masterkey mMasterKey;
         DatabaseContent mDatabaseContent;
 

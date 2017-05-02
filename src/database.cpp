@@ -46,21 +46,35 @@ Database Database::createFromFile(QString filename)
 
     // Create new database and read header data from file
     Database d;
-    in >> d.mTransformSeed; // read transform seed
-    in >> d.mMasterSeed; // read master seed
-    in >> d.mEncryptionIv; // read ecryption initialisation vector
-    in >> d.mStreamStartBytes; // read stream start bytes (check)
-    in >> d.mProtectedStreamKey; // read protected stream key
-    in >> d.mTransformRounds; // read number of transform rounds
 
+    //Temporaries for database content
     QByteArray crypted;
+    QByteArray encryptionIv;
+    QByteArray streamStartBytes;
+
+    //Temporaries for masterkey
+    QByteArray transformSeed;
+    int transformRounds;
+    QByteArray masterSeed;
+
+
+    in >> transformSeed; // read transform seed
+    in >> masterSeed; // read master seed
+    in >> encryptionIv; // read ecryption initialisation vector
+    in >> streamStartBytes; // read stream start bytes (check)
+    in >> d.mProtectedStreamKey; // read protected stream key
+    in >> transformRounds; // read number of transform rounds
     in >> crypted;
 
     file.close();
 
+    d.mMasterKey.setTransformSeed(transformSeed);
+    d.mMasterKey.setTransformRounds(transformRounds);
+    d.mMasterKey.setMasterSeed(masterSeed);
 
-    d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
-    d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
+
+    d.mDatabaseContent.setEncryptionIv(encryptionIv);
+    d.mDatabaseContent.setStreamStartBytes(streamStartBytes);
     d.mDatabaseContent.setCrypted(crypted);
 
     return d;
@@ -73,20 +87,15 @@ Database Database::createNew(QString password, int rounds)
 {
     Database d; // create new database
 
-    //Props for generating the masterkey out of the password
-    d.mTransformSeed =  randomGen()->randomArray(32);
-    d.mTransformRounds = rounds; // read number of transform rounds
-    d.mMasterSeed =  randomGen()->randomArray(32);
 
-
-
-    d.mEncryptionIv = randomGen()->randomArray(16);
-    d.mStreamStartBytes = randomGen()->randomArray(32);
     d.mProtectedStreamKey = randomGen()->randomArray(32);
 
 
-    d.mMasterKey = Masterkey(); // Initialize masterkey object
-    bool keycheck = d.mMasterKey.deriveKey(password, d.mTransformSeed, d.mTransformRounds, d.mMasterSeed); // derive key
+    d.mMasterKey = Masterkey();
+    d.mMasterKey.setTransformSeed(randomGen()->randomArray(32));
+    d.mMasterKey.setTransformRounds(rounds);
+    d.mMasterKey.setMasterSeed(randomGen()->randomArray(32));
+    bool keycheck = d.mMasterKey.deriveKey(password); // derive key
 
     // Check if master key was derived properly
     if(!keycheck){
@@ -94,8 +103,8 @@ Database Database::createNew(QString password, int rounds)
         return Database();
     }
 
-    d.mDatabaseContent.setEncryptionIv(d.mEncryptionIv);
-    d.mDatabaseContent.setStreamStartBytes(d.mStreamStartBytes);
+    d.mDatabaseContent.setEncryptionIv(randomGen()->randomArray(16));
+    d.mDatabaseContent.setStreamStartBytes(randomGen()->randomArray(32));
 
     return d;
 }
@@ -106,8 +115,7 @@ Database Database::createNew(QString password, int rounds)
 bool Database::decrypt(QString password)
 {
 
-    mMasterKey = Masterkey(); // Initialize masterkey object
-    bool keycheck = mMasterKey.deriveKey(password, mTransformSeed, mTransformRounds, mMasterSeed); // derive key
+    bool keycheck = mMasterKey.deriveKey(password); // derive key
 
     // Check if master key was derived properly
     if(!keycheck){
@@ -142,12 +150,12 @@ bool Database::write(QString filename)
     // Write a header with a "magic number" and a version
     out.writeRawData("zirconiumpass", 14); // Magic bytes: 697a 6b72 6e6f 7569 706d 7361 0073
     out << (qint32)VERSION; // Write version
-    out << mTransformSeed; // Write transform seed
-    out << mMasterSeed; // Write master seed
-    out << mEncryptionIv; // Write ecryption initialisation vector
-    out << mStreamStartBytes; // Write stream start bytes (offset)
+    out << mMasterKey.transformSeed(); // Write transform seed
+    out << mMasterKey.masterSeed(); // Write master seed
+    out << mDatabaseContent.encryptionIv(); // Write ecryption initialisation vector
+    out << mDatabaseContent.streamStartBytes(); // Write stream start bytes (offset)
     out << mProtectedStreamKey; // Write protected stream key
-    out << mTransformRounds; // Write number of transform rounds
+    out << mMasterKey.transformRounds(); // Write number of transform rounds
 
     out << mDatabaseContent.crypted();
 

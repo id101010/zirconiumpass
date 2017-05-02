@@ -8,15 +8,24 @@ class Masterkey
 {
     public:
         Masterkey();
-        bool deriveKey(QString password,
-                        QByteArray transformSeed,
-                        int transformRounds,
-                        QByteArray masterSeed);
+        int transformRounds() const;
+        void setTransformRounds(int rounds);
+
+        void setTransformSeed(const QByteArray& seed);
+        QByteArray transformSeed() const;
+
+        void setMasterSeed(const QByteArray& seed);
+        QByteArray masterSeed() const;
+
+        bool deriveKey(QString password);
 
         bool encrypt(const QByteArray& iv, const QByteArray& content, QByteArray& outEncrypted) const;
         bool decrypt(const QByteArray& iv, const QByteArray& encryptedContent, QByteArray& outDecrypted) const;
     private:
-        QByteArray mKey;
+        QByteArray mKey; //TODO: Memory protect this
+        QByteArray mTransformSeed;
+        QByteArray mMasterSeed;
+        int mTransformRounds;
 };
 
 #endif // MASTERKEY_H
