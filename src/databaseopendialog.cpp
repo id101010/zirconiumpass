@@ -20,6 +20,11 @@ DatabaseOpenDialog::~DatabaseOpenDialog()
     delete ui;
 }
 
+std::unique_ptr<Database> DatabaseOpenDialog::database()
+{
+    return std::move(mDatabase);
+}
+
 void DatabaseOpenDialog::on_btnDatabase_clicked()
 {
     QFileDialog filedialog;
@@ -49,24 +54,27 @@ void DatabaseOpenDialog::accept()
         qDebug() << "Selected database: " << ui->lblDatabaseName->text();
     }else{
         qDebug() << "No database selected!";
-        QMessageBox* msgbox = new QMessageBox(this);
-        msgbox->setWindowTitle("Error");
-        msgbox->setText("No database selected!");
-        msgbox->exec();
+        QMessageBox msgbox(this);
+        msgbox.setWindowTitle("Error");
+        msgbox.setText("No database selected!");
+        msgbox.exec();
         return;
     }
+    QString fileName = ui->lblDatabaseName->text();
 
     // test if a password has been provided
     if(ui->lblPassword->text() != ""){
         qDebug() << "Password: " << ui->lblPassword->text();
     }else{
         qDebug() << "No password!";
-        QMessageBox* msgbox = new QMessageBox(this);
-        msgbox->setWindowTitle("Error");
-        msgbox->setText("No passowrd!");
-        msgbox->exec();
+        QMessageBox msgbox(this);
+        msgbox.setWindowTitle("Error");
+        msgbox.setText("No password!");
+        msgbox.exec();
         return;
     }
+
+    mDatabase = std::unique_ptr<Database>(Database::createFromFile(fileName));
 
     close();
 }

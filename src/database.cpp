@@ -16,7 +16,7 @@ Database::Database() : mDatabaseContent(QSharedPointer<DatabaseFactory>::create(
 /**
  * Decrypt and parse a pass database stored as file
  **/
-Database Database::createFromFile(QString filename)
+std::unique_ptr<Database> Database::createFromFile(QString filename)
 {
     char magic[14]; // magic number
     qint32 version; // version
@@ -26,7 +26,7 @@ Database Database::createFromFile(QString filename)
     // Open file as read only and check if file is opened
     if(!file.open(QIODevice::ReadOnly)){
         qWarning() << "Could not open file!";
-        return Database(); // return empty db
+        return {}; // return empty db
     }
 
     QDataStream in(&file); // Link datastream to in
@@ -34,18 +34,18 @@ Database Database::createFromFile(QString filename)
     // Try to read magic number
     if(in.readRawData(magic, 14) != 14 || strncmp(magic, "zirconiumpass", 14) != 0){
         qWarning() << "Magic number invalid!";
-        return Database(); // return empty db
+        return {}; // return empty db
     }
 
     // Read and check version
     in >> version;
     if(version != VERSION){
         qWarning() << "Version does not match!";
-        return Database(); // return empty db
+        return {}; // return empty db
     }
 
     // Create new database and read header data from file
-    Database d;
+    std::unique_ptr<Database> d(new Database());
 
     //Temporaries for database content
     QByteArray crypted;
@@ -62,20 +62,20 @@ Database Database::createFromFile(QString filename)
     in >> masterSeed; // read master seed
     in >> encryptionIv; // read ecryption initialisation vector
     in >> streamStartBytes; // read stream start bytes (check)
-    in >> d.mProtectedStreamKey; // read protected stream key
+    in >> d->mProtectedStreamKey; // read protected stream key
     in >> transformRounds; // read number of transform rounds
     in >> crypted;
 
     file.close();
 
-    d.mMasterKey.setTransformSeed(transformSeed);
-    d.mMasterKey.setTransformRounds(transformRounds);
-    d.mMasterKey.setMasterSeed(masterSeed);
+    d->mMasterKey.setTransformSeed(transformSeed);
+    d->mMasterKey.setTransformRounds(transformRounds);
+    d->mMasterKey.setMasterSeed(masterSeed);
 
 
-    d.mDatabaseContent.setEncryptionIv(encryptionIv);
-    d.mDatabaseContent.setStreamStartBytes(streamStartBytes);
-    d.mDatabaseContent.setCrypted(crypted);
+    d->mDatabaseContent.setEncryptionIv(encryptionIv);
+    d->mDatabaseContent.setStreamStartBytes(streamStartBytes);
+    d->mDatabaseContent.setCrypted(crypted);
 
     return d;
 }
@@ -83,28 +83,28 @@ Database Database::createFromFile(QString filename)
 /**
  * Create a new, empty and initialized database object
  **/
-Database Database::createNew(QString password, int rounds)
+std::unique_ptr<Database> Database::createNew(QString password, int rounds)
 {
-    Database d; // create new database
+    std::unique_ptr<Database> d(new Database()); // create new database
 
 
-    d.mProtectedStreamKey = randomGen()->randomArray(32);
+    d->mProtectedStreamKey = randomGen()->randomArray(32);
 
 
-    d.mMasterKey = Masterkey();
-    d.mMasterKey.setTransformSeed(randomGen()->randomArray(32));
-    d.mMasterKey.setTransformRounds(rounds);
-    d.mMasterKey.setMasterSeed(randomGen()->randomArray(32));
-    bool keycheck = d.mMasterKey.deriveKey(password); // derive key
+    d->mMasterKey = Masterkey();
+    d->mMasterKey.setTransformSeed(randomGen()->randomArray(32));
+    d->mMasterKey.setTransformRounds(rounds);
+    d->mMasterKey.setMasterSeed(randomGen()->randomArray(32));
+    bool keycheck = d->mMasterKey.deriveKey(password); // derive key
 
     // Check if master key was derived properly
     if(!keycheck){
         qDebug() << "Master key derivation failed!";
-        return Database();
+        return {};
     }
 
-    d.mDatabaseContent.setEncryptionIv(randomGen()->randomArray(16));
-    d.mDatabaseContent.setStreamStartBytes(randomGen()->randomArray(32));
+    d->mDatabaseContent.setEncryptionIv(randomGen()->randomArray(16));
+    d->mDatabaseContent.setStreamStartBytes(randomGen()->randomArray(32));
 
     return d;
 }
