@@ -164,12 +164,12 @@ bool Database::write(QString filename)
     return true;
 }
 
-DatabaseContent &Database::databaseContent()
+DatabaseContent& Database::databaseContent()
 {
     return mDatabaseContent;
 }
 
-const DatabaseContent &Database::databaseContent() const
+const DatabaseContent& Database::databaseContent() const
 {
     return mDatabaseContent;
 }

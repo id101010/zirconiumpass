@@ -14,14 +14,22 @@ SOURCES += mainwindow.cpp \
         database.cpp \
         masterkey.cpp \
         databaseopendialog.cpp \
-        databasecontent.cpp
+        databasecontent.cpp \
+    entry.cpp \
+    abstractvalue.cpp \
+    cryptedvalue.cpp \
+    plainvalue.cpp
 
 HEADERS += mainwindow.h \
         database.h \
         masterkey.h \
         databaseopendialog.h \
         databasecontent.h \
-        jsonserializable.h
+        jsonserializable.h \
+    entry.h \
+    abstractvalue.h \
+    cryptedvalue.h \
+    plainvalue.h
 
 FORMS += mainwindow.ui \
          databaseopendialog.ui
