@@ -1,7 +1,6 @@
 #include <QApplication>
 
 #include "mainwindow.h"
-#include "databaseopendialog.h"
 #include "crypto/Crypto.h"
 #include <QDebug>
 
@@ -16,11 +15,8 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
-    //MainWindow w;
-    // w.show();
+    MainWindow w;
+    w.show();
 
-    DatabaseOpenDialog dialog;
-    dialog.exec();
-
-   // return a.exec();
+    return a.exec();
 }

@@ -73,8 +73,23 @@ void DatabaseOpenDialog::accept()
         msgbox.exec();
         return;
     }
+    QString password = ui->lblPassword->text();
 
     mDatabase = std::unique_ptr<Database>(Database::createFromFile(fileName));
+    if(!mDatabase) {
+        qDebug() << "File open error";
+        QMessageBox::warning(this,"Database open Error","The database file could not be opened");
+        return;
+    }
 
-    close();
+    if(!mDatabase->decrypt(password)) {
+        qDebug() << "Password wrong";
+        QMessageBox::warning(this,"Database open Error","Wrong password?");
+        return;
+    }
+
+    password.fill('0',password.length()); //Overwrite password memory region
+
+    qDebug() << "Password ok";
+    QDialog::accept();
 }
