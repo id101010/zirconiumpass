@@ -15,12 +15,13 @@ class Entry : public JsonSerializable
         void setTitle(const QString &title);
         QVector<AbstractValue*> values();
         AbstractValue* valueByName(const QString& name);
-        void removeValue(const QString& name);
+        void removeValueByName(const QString& name);
         void addValue(AbstractValue* value);
-        QJsonObject saveToJson() const override;
-        bool loadFromJson(const QJsonObject &obj) override;
+        virtual QJsonObject saveToJson() const override;
+        virtual bool loadFromJson(const QJsonObject &obj) override;
     private:
         QString mTitle;
+        QVector<AbstractValue*> mValues;
 };
 
 #endif // ENTRY_H

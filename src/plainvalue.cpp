@@ -24,3 +24,8 @@ bool PlainValue::loadFromJson(const QJsonObject &obj)
 {
 
 }
+
+const QString &PlainValue::type() const
+{
+    return "plain";
+}

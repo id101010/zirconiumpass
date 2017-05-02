@@ -24,3 +24,8 @@ bool CryptedValue::loadFromJson(const QJsonObject &obj)
 {
 
 }
+
+const QString &CryptedValue::type() const
+{
+    return "encrypted";
+}
