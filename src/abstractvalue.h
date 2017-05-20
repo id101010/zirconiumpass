@@ -2,6 +2,7 @@
 #define ABSTRACTVALUE_H
 
 #include "jsonserializable.h"
+#include <QMetaType>
 
 class AbstractValue : public JsonSerializable
 {
@@ -15,5 +16,6 @@ class AbstractValue : public JsonSerializable
         bool loadFromJson(const QJsonObject &obj) override;
         virtual const QString& type(void) const = 0;
 };
+Q_DECLARE_METATYPE(AbstractValue*)
 
 #endif // ABSTRACTVALUE_H

@@ -20,7 +20,8 @@ SOURCES += mainwindow.cpp \
         abstractvalue.cpp \
         cryptedvalue.cpp \
         plainvalue.cpp \
-        entrydialog.cpp
+        entrydialog.cpp \
+        valuestablemodel.cpp
 
 HEADERS += mainwindow.h \
         database.h \
@@ -33,7 +34,8 @@ HEADERS += mainwindow.h \
         abstractvalue.h \
         cryptedvalue.h \
         plainvalue.h \
-        entrydialog.h
+        entrydialog.h \
+        valuestablemodel.h
 
 FORMS += mainwindow.ui \
          databaseopendialog.ui \

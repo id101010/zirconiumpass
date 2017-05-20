@@ -7,9 +7,11 @@
 #include <QString>
 #include <QVector>
 #include <QMetaType>
+#include <QObject>
 
-class Entry : public JsonSerializable
+class Entry : public QObject, public JsonSerializable
 {
+    Q_OBJECT
     public:
         Entry();
         const QString& title();
@@ -23,6 +25,9 @@ class Entry : public JsonSerializable
     private:
         QString mTitle;
         QVector<AbstractValue*> mValues;
+    signals:
+        void valueAdded(int index);
+        void valueRemoved(int index);
 };
 Q_DECLARE_METATYPE(Entry*)
 
