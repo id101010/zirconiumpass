@@ -1,5 +1,6 @@
 #include "entrydialog.h"
 #include "ui_entrydialog.h"
+#include <QClipboard>
 #include <QMessageBox>
 #include <QTableView>
 #include "plainvalue.h"
@@ -42,7 +43,6 @@ void EntryDialog::accept()
     QDialog::accept();
 }
 
-
 int EntryDialog::exec()
 {
     if(mEntry == nullptr) {
@@ -55,8 +55,6 @@ int EntryDialog::exec()
     mValuesTableModel.setEntry(mEntry);
     return QDialog::exec();
 }
-
-
 
 void EntryDialog::on_pbNewPlain_clicked()
 {
@@ -88,9 +86,27 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
 
     QMenu m;
     QAction* removeAction = m.addAction("Remove Value");
+    QAction* copyAction = m.addAction("Copy Value");
+    QClipboard *clipboard = QApplication::clipboard();
 
     QAction* selectedAction = m.exec(ui->tableView->mapToGlobal(pos));
+
     if(selectedAction == removeAction) {
         mEntry->removeValue(selectedValue);
+    }
+
+    if(selectedAction == copyAction) {
+        if(selectedValue->type() == "plain"){
+            clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
+        }
+        if(selectedValue->type() == "encrypted"){
+            static_cast<CryptedValue*>(selectedValue)->decrypt(QByteArray(), [](const char* data, size_t size){
+
+                QString password = QString::fromLocal8Bit(data,size);
+
+                QClipboard *clipboard = QApplication::clipboard();
+                clipboard->setText(password);
+            });
+        }
     }
 }
