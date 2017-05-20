@@ -3,6 +3,8 @@
 #include <QTest>
 #include <cryptedvalue.h>
 #include <plainvalue.h>
+#include "crypto/Random.h"
+#include "crypto/Crypto.h"
 
 TestEntry::TestEntry(QObject *parent) : QObject(parent)
 {
@@ -11,6 +13,7 @@ TestEntry::TestEntry(QObject *parent) : QObject(parent)
 
 void TestEntry::initTestCase()
 {
+    QVERIFY(Crypto::init());
 }
 
 void TestEntry::testSinglePlainValue()
@@ -59,12 +62,15 @@ void TestEntry::testSingleCryptedValue()
 {
     /* ------------- Save ------------- */
 
+    QByteArray streamKey = randomGen()->randomArray(32);
+    QString pw = "secretpassw0rt";
+
     Entry saveEntry;
     saveEntry.setTitle("testcrypted");
 
     CryptedValue *v = new CryptedValue();
     v->setName("password2");
-    v->setValue("gggggg", "secretpassw0rt");
+    v->setValue(streamKey, pw);
     saveEntry.addValue(v);
 
     QJsonObject entryJson = saveEntry.saveToJson();
@@ -82,13 +88,15 @@ void TestEntry::testSingleCryptedValue()
 
     QCOMPARE(valueJson["cryptedValue"].isArray(), true);
 
-    QJsonArray arr2 = entryJson["cryptedValue"].toArray();
-    //QCOMPARE(arr2.count(), 17);
+    QJsonArray arr2 = valueJson["cryptedValue"].toArray();
+    QCOMPARE(arr2.count(), pw.length()+1);
 
     for(int i=0; i<arr2.count(); i++){
         QJsonValue b = arr2.at(i);
         QCOMPARE(b.isDouble(), true);
-        int x = b.toInt();
+
+        //Checking the actual int values would require us to do the crypto manually here....
+        //It should be enough if we test the load below
     }
 
     /* ------------- Load ------------- */
@@ -103,7 +111,12 @@ void TestEntry::testSingleCryptedValue()
         AbstractValue *saved = saveEntry.values()[i];
         QCOMPARE(loaded->name(), saved->name());
         QCOMPARE(loaded->type(), saved->type());
-        //QCOMPARE(static_cast<CryptedValue*>(loaded)->value(), static_cast<CryptedValue*>(saved)->value());
+        bool visitorHasBeenCalled = false;
+        static_cast<CryptedValue*>(loaded)->decrypt(streamKey,[&pw,&visitorHasBeenCalled](const QString& actualPw) {
+            QCOMPARE(actualPw, pw);
+            visitorHasBeenCalled  = true;
+        });
+        QCOMPARE(visitorHasBeenCalled, true);
     }
 }
 

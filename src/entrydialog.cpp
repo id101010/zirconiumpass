@@ -107,9 +107,7 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
             });
         }
         if(selectedValue->type() == "encrypted"){
-            static_cast<CryptedValue*>(selectedValue)->decrypt(mDatabase->protectedStreamKey(), [](const char* data, size_t size){
-
-                QString password = QString::fromLocal8Bit(data,size);
+            static_cast<CryptedValue*>(selectedValue)->decrypt(mDatabase->protectedStreamKey(), [](const QString& password){
                 QClipboard *clipboard = QApplication::clipboard();
 
                 clipboard->setText(password);

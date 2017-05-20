@@ -10,7 +10,7 @@ class CryptedValue : public AbstractValue
 {
     public:
         CryptedValue();
-        void decrypt(const QByteArray& streamkey, std::function<void(const char*, size_t)> visitor);
+        void decrypt(const QByteArray& streamkey, std::function<void(const QString &)> visitor);
         void setValue(const QByteArray& streamkey, const QString& value);
         virtual QJsonObject saveToJson() const override;
         virtual bool loadFromJson(const QJsonObject &obj) override;

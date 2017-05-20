@@ -10,7 +10,7 @@ CryptedValue::CryptedValue()
 
 }
 
-void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (const char *, size_t)> visitor)
+void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (const QString&)> visitor)
 {
     QByteArray outDecrypted;
 
@@ -45,9 +45,12 @@ void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (cons
         buf.close();
         }
 
-    visitor(outDecrypted.constData(),outDecrypted.length()); //let visitor look at it
 
-    outDecrypted.fill('0'); //overwrite memory
+    QString decryptedString  = QString::fromUtf8(outDecrypted);
+    visitor(decryptedString); //let visitor look at it
+
+    decryptedString.fill('0'); //overwrite memory
+    outDecrypted.fill('0');
 }
 
 void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
@@ -76,7 +79,7 @@ void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
         return;
     }
 
-    if(stream.write(value.toLocal8Bit()) == -1) {
+    if(stream.write(value.toUtf8()) == -1) {
         qWarning() << stream.errorString();
         return;
     }
