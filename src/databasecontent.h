@@ -4,12 +4,12 @@
 #include "masterkey.h"
 #include <QVector>
 #include <QSharedPointer>
-#include <jsonserializable.h>
+#include "entry.h"
 
 
 struct DatabaseFactory {
     virtual ~DatabaseFactory();
-    virtual JsonSerializable* createEntry();
+    virtual Entry* createEntry();
 };
 
 class DatabaseContent : public QObject
@@ -31,13 +31,11 @@ public:
     QByteArray encryptionIv() const;
     QByteArray streamStartBytes() const;
 
-    const QVector<JsonSerializable*>& serializables() const;
     const QVector<class Entry *> &entries() const;
 
 
-    void addEntry(JsonSerializable* entry);
-    void removeEntry(JsonSerializable* entry);
-
+    void addEntry(Entry *entry);
+    void removeEntry(Entry* entry);
 
 
     void setFactory(QSharedPointer<DatabaseFactory> factory); //for testing purposes
@@ -48,7 +46,7 @@ public:
 
  private:
     QSharedPointer<DatabaseFactory> mFactory;
-    QVector<JsonSerializable*> mEntries;
+    QVector<Entry*> mEntries;
     QByteArray mCrypted;
     QByteArray mEncryptionIv;
     QByteArray mStreamStartBytes;

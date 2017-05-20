@@ -72,7 +72,7 @@ bool DatabaseContent::decrypt(const Masterkey &masterkey)
         if(val.isObject()) {
             const QJsonObject obj = val.toObject();
             //TODO: Check basic properties?
-            JsonSerializable* instance =  mFactory->createEntry();
+            Entry* instance =  mFactory->createEntry();
             Q_ASSERT(instance!=nullptr);
             if(!instance->loadFromJson(obj)) {
                 qWarning() << "error while deserializing Entry. skipping." << obj;
@@ -127,33 +127,19 @@ QByteArray DatabaseContent::streamStartBytes() const
     return mStreamStartBytes;
 }
 
-const QVector<JsonSerializable *> &DatabaseContent::serializables() const
+const QVector<Entry *> &DatabaseContent::entries() const
 {
     return mEntries;
 }
 
-const QVector<class Entry*> &DatabaseContent::entries() const
-{
-    //Warning: Only call this method if you are sure that only Entry* or subclasses of it are in the list
-
-
-    //During normal application operation all serialiables in this list will be of Type Entry
-    //But for a decoupled testing it is easier if we store them as list of serializables.
-
-    //This is why we add a little hack here: Cast the vector of serializable* to a list of Entry*
-    //An alternative would be to copy the vector here and do safe-casts. Or do the cast on call-site
-
-    return *reinterpret_cast< const QVector<class Entry*>*>(&mEntries);
-}
-
-void DatabaseContent::addEntry(JsonSerializable *entry)
+void DatabaseContent::addEntry(Entry *entry)
 {
     Q_ASSERT(entry!=nullptr);
     mEntries.append(entry);
     emit entryAdded(mEntries.size()-1);
 }
 
-void DatabaseContent::removeEntry(JsonSerializable *entry)
+void DatabaseContent::removeEntry(Entry *entry)
 {
     Q_ASSERT(entry!=nullptr);
     int ind = mEntries.indexOf(entry);
@@ -173,7 +159,7 @@ DatabaseFactory::~DatabaseFactory()
 
 }
 
-JsonSerializable *DatabaseFactory::createEntry()
+Entry *DatabaseFactory::createEntry()
 {
     return new Entry();
 }

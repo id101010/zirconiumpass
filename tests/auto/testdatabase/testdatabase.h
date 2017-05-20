@@ -23,7 +23,7 @@ private:
     QSharedPointer<DatabaseFactory> factory;
 
 private:
-   class DummyEntry : public JsonSerializable {
+   class DummyEntry : public Entry {
    public:
        virtual QJsonObject saveToJson() const override
        {
@@ -41,7 +41,7 @@ private:
 
    class Factory : public DatabaseFactory  {
    public:
-       virtual JsonSerializable *createEntry() override {
+       virtual Entry *createEntry() override {
            return new DummyEntry();
        }
    };

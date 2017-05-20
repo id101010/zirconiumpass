@@ -41,14 +41,19 @@ void Entry::removeValueByName(const QString &name)
     AbstractValue *objectToRemove = valueByName(name);
 
     if(objectToRemove != nullptr){
-        mValues.removeOne(objectToRemove);
+        int ind = mValues.indexOf(objectToRemove);
+        mValues.removeAt(ind);
+        emit valueRemoved(ind);
     }
 }
 
 void Entry::addValue(AbstractValue *value)
 {
+    Q_ASSERT(value!=nullptr);
     mValues.append(value);
+    emit valueAdded(mValues.size()-1);
 }
+
 
 QJsonObject Entry::saveToJson() const
 {

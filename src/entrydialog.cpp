@@ -1,12 +1,15 @@
 #include "entrydialog.h"
 #include "ui_entrydialog.h"
 #include <QMessageBox>
+#include <QTableView>
+#include "plainvalue.h"
 
 EntryDialog::EntryDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EntryDialog), mEntry(nullptr)
 {
     ui->setupUi(this);
+    ui->tableView->setModel(&mValuesTableModel);
 }
 
 Entry *EntryDialog::entry()
@@ -45,5 +48,14 @@ int EntryDialog::exec()
         ui->leTitle->setText(mEntry->title());
         this->setWindowTitle("Edit entry");
     }
+    mValuesTableModel.setEntry(mEntry);
     return QDialog::exec();
+}
+
+void EntryDialog::on_pushButton_clicked()
+{
+    PlainValue* pv = new PlainValue();
+    pv->setName("aaa");
+    pv->setValue("bbbb");
+    mEntry->addValue(pv);
 }
