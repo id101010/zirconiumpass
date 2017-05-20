@@ -17,7 +17,11 @@ void AbstractValue::setName(const QString &name)
 
 QJsonObject AbstractValue::saveToJson() const
 {
+    QJsonObject val;
+    val["type"] = this->type();
+    val["name"] = this->name();
 
+    return val;
 }
 
 bool AbstractValue::loadFromJson(const QJsonObject &obj)

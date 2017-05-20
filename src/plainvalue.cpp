@@ -17,16 +17,26 @@ void PlainValue::setValue(const QString &value)
 
 QJsonObject PlainValue::saveToJson() const
 {
-    QJsonObject val;
-    val["type"] = this->type();
-    val["name"] = this->name();
+    QJsonObject val = AbstractValue::saveToJson();
     val["plainValue"] = mValue;
     return val;
 }
 
 bool PlainValue::loadFromJson(const QJsonObject &obj)
 {
+    /* try to load plainValue */
+    if(obj["plainValue"].isString()){
+        mValue = obj["plainValue"].toString();
+    } else {
+        return false;
+    }
 
+    /* try to load name */
+    if(obj["name"].isString()){
+        this->setName(obj["name"].toString());
+    } else {
+        return false;
+    }
 }
 
 const QString& PlainValue::type() const
