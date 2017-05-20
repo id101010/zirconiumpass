@@ -23,6 +23,7 @@ public slots:
     void closeDatabaseClicked();
     void createNewDatabaseClicked();
     void createNewEntryClicked();
+    void saveDatabaseClicked();
     void tableContextMenuRequested(const QPoint &pos);
     void entryDoubleClicked(const QModelIndex& index);
 

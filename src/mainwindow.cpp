@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionCreateNewEntry->setEnabled(false);
     ui->actionEdit_Entry->setEnabled(false);
     ui->actionDelete_Entry->setEnabled(false);
+    ui->actionSave->setEnabled(false);
     ui->tableView->setModel(&mEntriesModel);
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -34,8 +35,11 @@ void MainWindow::openDatabaseClicked()
         mDatabase = dialog.database();
         if(mDatabase) {
             ui->actionClose->setEnabled(true);
+            ui->actionSave->setEnabled(true);
             ui->actionCreateNewEntry->setEnabled(true);
             mEntriesModel.setDatabase(mDatabase.get());
+
+            //Todo: store database path to member variable, so that we can use in the save function
         }
     }
 }
@@ -46,30 +50,21 @@ void MainWindow::closeDatabaseClicked()
         mEntriesModel.setDatabase(nullptr);
         mDatabase.reset();
         ui->actionClose->setEnabled(false);
+        ui->actionSave->setEnabled(false);
+        ui->actionCreateNewEntry->setEnabled(false);
     }
 }
 
 
-//test stuff ahead
-#include "entry.h"
-#include "cryptedvalue.h"
-
 void MainWindow::createNewDatabaseClicked()
 {
     closeDatabaseClicked();
-    mDatabase = Database::createNew("passw0rd");
-    Entry* en = new Entry();
-    en->setTitle("Eintrag 1");
-    CryptedValue* cv = new CryptedValue();
-    cv->setValue(mDatabase->protectedStreamKey(),"hans");
-    cv->setName("passwort");
-    en->addValue(cv);
-
-    mDatabase->databaseContent().addEntry(en);
-    mDatabase->write("test.db");
+    ui->actionClose->setEnabled(true);
+    ui->actionCreateNewEntry->setEnabled(true);
+    ui->actionSave->setEnabled(true);
+    mDatabase = Database::createNew("passw0rd"); //TODO: Use databaseopen dialog to enter a initial password and path (save path to member variable)
 }
 
-// end test stuff
 
 void MainWindow::createNewEntryClicked()
 {
@@ -78,6 +73,14 @@ void MainWindow::createNewEntryClicked()
         mDatabase->databaseContent().addEntry(dialog.entry());
     }
 }
+
+void MainWindow::saveDatabaseClicked()
+{
+    if(mDatabase) {
+        mDatabase->write("test.db"); //TODO: use dynamic save path
+    }
+}
+
 
 void MainWindow::tableContextMenuRequested(const QPoint &pos)
 {

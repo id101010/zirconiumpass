@@ -35,6 +35,7 @@
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionCreate_New"/>
+    <addaction name="actionSave"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
     <addaction name="actionQuit_Zirconiumpass"/>
@@ -112,6 +113,14 @@
   <action name="actionDelete_Entry">
    <property name="text">
     <string>Delete Entry</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
@@ -198,11 +207,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveDatabaseClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>601</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openDatabaseClicked()</slot>
   <slot>closeDatabaseClicked()</slot>
   <slot>createNewDatabaseClicked()</slot>
   <slot>createNewEntryClicked()</slot>
+  <slot>saveDatabaseClicked()</slot>
  </slots>
 </ui>

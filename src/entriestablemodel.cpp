@@ -6,6 +6,8 @@
 
 EntriesTableModel::EntriesTableModel() : mDatabase(nullptr)
 {
+    mAdditionalColumns.append("password0");
+    mAdditionalColumns.append("url");
 }
 
 EntriesTableModel::~EntriesTableModel()
@@ -51,13 +53,12 @@ QVariant EntriesTableModel::data(const QModelIndex &index, int role) const
             if(col == 0) {
                return entry->title();
             } else {
-               //TODO: uncomment as soon as class is ready
-               /*AbstractValue* value = entry->valueByName(mAdditionalColumns[col-1]);
-               if(value->type() == "plain") {
-                   PlainValue* plainValue = reinterpret_cast<PlainValue*>(value);
-                   return plainValue.value();
-               }*/
-               return QVariant();
+               AbstractValue* value = entry->valueByName(mAdditionalColumns[col-1]);
+               if(value != nullptr) {
+                   return value->displayValue();
+               } else {
+                   return "<no such value>";
+               }
             }
         }
     }
