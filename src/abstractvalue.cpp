@@ -5,7 +5,7 @@ AbstractValue::AbstractValue()
 
 }
 
-const QString &AbstractValue::name()
+const QString &AbstractValue::name() const
 {
     return mName;
 }

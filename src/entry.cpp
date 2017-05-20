@@ -1,7 +1,9 @@
 #include "entry.h"
 
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QString>
+#include <QDebug>
 
 Entry::Entry()
 {
@@ -55,14 +57,17 @@ QJsonObject Entry::saveToJson() const
 
     entry.insert("title", mTitle);
 
+    // Save all values
     for(int i = 0; i < mValues.size(); i++){
-        QJsonObject val;
-        val["type"] = mValues[i]->type();
-        val["name"] = mValues[i]->name();
-        jarray.append(val);
+        jarray.append(mValues[i]->saveToJson());
     }
 
     entry["values"] = jarray;
+
+    //Debug print
+    QJsonDocument doc;
+    doc.setObject(entry);
+    qDebug() << doc.toJson();
 
     return entry;
 }

@@ -9,7 +9,7 @@ class AbstractValue : public JsonSerializable
         QString mName;
     public:
         AbstractValue();
-        const QString& name();
+        const QString& name() const;
         void setName(const QString& name);
         QJsonObject saveToJson() const override;
         bool loadFromJson(const QJsonObject &obj) override;
