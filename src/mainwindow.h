@@ -24,6 +24,7 @@ public slots:
     void createNewDatabaseClicked();
     void createNewEntryClicked();
     void tableContextMenuRequested(const QPoint &pos);
+    void entryDoubleClicked(const QModelIndex& index);
 
 private:
     void editEntry(Entry* entry);

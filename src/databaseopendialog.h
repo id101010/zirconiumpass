@@ -28,7 +28,8 @@ private:
 
     // QDialog interface
 public slots:
-    void accept();
+    virtual void accept() override;
+    virtual int exec() override;
 };
 
 #endif // DATABASEOPENDIALOG_H

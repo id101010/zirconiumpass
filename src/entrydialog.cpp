@@ -54,6 +54,7 @@ int EntryDialog::exec()
     } else {
         ui->leTitle->setText(mEntry->title());
         this->setWindowTitle("Edit entry");
+        ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
     }
     mValuesTableModel.setEntry(mEntry);
     return QDialog::exec();

@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui widgets
-
+CONFIG += c++11
 ROOTPATH=$$PWD/..
 
 TARGET = ZirconiumPass

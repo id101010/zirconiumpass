@@ -13,6 +13,9 @@ int main(int argc, char *argv[])
     //Tests have been moved to separate subproject.
     //Check the build/tests folder or activate the Plugin "AutoTest" in QtCreator (Help -> Plugins)
 
+    //Needed for Qsettings
+    QCoreApplication::setOrganizationName("BFH");
+    QCoreApplication::setApplicationName("ZirconiumPass");
 
     QApplication a(argc, argv);
     MainWindow w;

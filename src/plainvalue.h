@@ -12,8 +12,13 @@ class PlainValue : public AbstractValue
         virtual QJsonObject saveToJson() const override;
         virtual bool loadFromJson(const QJsonObject &obj) override;
         virtual const QString &type() const override;
+        virtual QString displayValue() const override;
+        virtual bool isEmpty() const override;
     private:
         QString mValue;
+
+
+
 };
 
 #endif // PLAINVALUE_H

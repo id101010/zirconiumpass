@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView,&QTableView::customContextMenuRequested,this,&MainWindow::tableContextMenuRequested);
+    connect(ui->tableView,&QTableView::doubleClicked, this, &MainWindow::entryDoubleClicked);
 }
 
 MainWindow::~MainWindow()
@@ -84,7 +85,7 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
     if(!mInd.isValid())  {
         return;
     }
-    Entry* selectedEntry = mInd.data(Qt::UserRole).value<Entry*>();
+    Entry* selectedEntry = mInd.data(Qt::UserRole).value<Entry*>(); //Get entry for index from model (by using custom role)
     if(selectedEntry == nullptr) {
         return;
     }
@@ -98,6 +99,15 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
         editEntry(selectedEntry);
     } else if(selectedAction == removeAction) {
         mDatabase->databaseContent().removeEntry(selectedEntry);
+    }
+}
+
+void MainWindow::entryDoubleClicked(const QModelIndex &index)
+{
+    if(index.isValid()) {
+        if(index.column() == 0) { //Title clicked
+            editEntry(index.data(Qt::UserRole).value<Entry*>());
+        }
     }
 }
 

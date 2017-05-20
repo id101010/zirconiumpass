@@ -49,24 +49,18 @@ int ValuesTableModel::columnCount(const QModelIndex &) const
 QVariant ValuesTableModel::data(const QModelIndex &index, int role) const
 {
     if(mEntry) {
-        AbstractValue* value = mEntry->values().at(index.row());
+        AbstractValue* abstractValue = mEntry->values().at(index.row());
         if(role == Qt::UserRole) {
-            return QVariant::fromValue(value);
+            return QVariant::fromValue(abstractValue);
         } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
             int col = index.column();
             if(col == 0) {
-               return value->name();
+                return abstractValue->name();
             } else if(col==1) {
-                //TODO: Maybe change?
-               if(value->type() == "plain") {
-                   PlainValue* plainValue = static_cast<PlainValue*>(value);
-                   return plainValue->value();
-               } else if(role == Qt::DisplayRole) {
-                   return "******";
-               } else { // Qt::EditRole && not plain value
-                   return ""; // do not return real password. just let the user start with an emtpy one
-               }
-               return QVariant();
+                if(role == Qt::EditRole && (abstractValue->isEmpty() || abstractValue->type() != "plain")) {
+                    return ""; // do not return real password in case its a crypted value. just let the user start with an empty one
+                }
+                return abstractValue->displayValue();
             }
         }
     }

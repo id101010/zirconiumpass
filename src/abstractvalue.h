@@ -15,6 +15,8 @@ class AbstractValue : public JsonSerializable
         QJsonObject saveToJson() const override;
         bool loadFromJson(const QJsonObject &obj) override;
         virtual const QString& type(void) const = 0;
+        virtual QString displayValue() const = 0;
+        virtual bool isEmpty() const = 0;
 };
 Q_DECLARE_METATYPE(AbstractValue*)
 

@@ -46,3 +46,20 @@ const QString& PlainValue::type() const
     static QString store = "plain";
     return store;
 }
+
+
+bool PlainValue::isEmpty() const
+{
+    return mValue.isEmpty();
+}
+
+
+QString PlainValue::displayValue() const
+{
+    if(isEmpty()) {
+        return "<emtpy>";
+    } else {
+        return mValue;
+    }
+}
+
