@@ -6,6 +6,7 @@
 #include "plainvalue.h"
 #include "cryptedvalue.h"
 #include <QMenu>
+#include "QTimer"
 
 EntryDialog::EntryDialog(QWidget *parent) :
     QDialog(parent),
@@ -98,14 +99,21 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
     if(selectedAction == copyAction) {
         if(selectedValue->type() == "plain"){
             clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
+            QTimer::singleShot(20000, [clipboard](){
+                clipboard->clear();
+            });
         }
         if(selectedValue->type() == "encrypted"){
             static_cast<CryptedValue*>(selectedValue)->decrypt(QByteArray(), [](const char* data, size_t size){
 
                 QString password = QString::fromLocal8Bit(data,size);
-
                 QClipboard *clipboard = QApplication::clipboard();
+
                 clipboard->setText(password);
+
+                QTimer::singleShot(20000, [clipboard](){
+                    clipboard->clear();
+                });
             });
         }
     }
