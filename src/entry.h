@@ -19,6 +19,7 @@ class Entry : public QObject, public JsonSerializable
         QVector<AbstractValue*> values();
         AbstractValue* valueByName(const QString& name);
         void removeValueByName(const QString& name);
+        void removeValue(AbstractValue* value);
         void addValue(AbstractValue* value);
         virtual QJsonObject saveToJson() const override;
         virtual bool loadFromJson(const QJsonObject &obj) override;

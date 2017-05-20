@@ -31,9 +31,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pbNewPlain">
        <property name="text">
-        <string>Add Value</string>
+        <string>Add Plain Value</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbNewCrypted">
+       <property name="text">
+        <string>Add Password</string>
        </property>
       </widget>
      </item>

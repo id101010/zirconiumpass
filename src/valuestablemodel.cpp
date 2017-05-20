@@ -2,6 +2,8 @@
 #include "entry.h"
 #include "abstractvalue.h"
 #include "plainvalue.h"
+#include "cryptedvalue.h"
+#include <QDebug>
 
 ValuesTableModel::ValuesTableModel() : mEntry(nullptr)
 {
@@ -45,11 +47,20 @@ QVariant ValuesTableModel::data(const QModelIndex &index, int role) const
         AbstractValue* value = mEntry->values().at(index.row());
         if(role == Qt::UserRole) {
             return QVariant::fromValue(value);
-        } else if(role == Qt::DisplayRole) {
+        } else if(role == Qt::DisplayRole || role == Qt::EditRole) {
             int col = index.column();
             if(col == 0) {
                return value->name();
-            } else {
+            } else if(col==1) {
+                //TODO: Maybe change?
+               if(value->type() == "plain") {
+                   PlainValue* plainValue = static_cast<PlainValue*>(value);
+                   return plainValue->value();
+               } else if(role == Qt::DisplayRole) {
+                   return "******";
+               } else { // Qt::EditRole && not plain value
+                   return ""; // do not return real password. just let the user start with an emtpy one
+               }
                return QVariant();
             }
         }
@@ -80,4 +91,36 @@ void ValuesTableModel::valueRemoved(int ind)
 {
     beginRemoveRows(QModelIndex(),ind,ind);
     endRemoveRows();
+}
+
+
+bool ValuesTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if(role != Qt::EditRole) {
+        return false;
+    }
+    if(mEntry) {
+        AbstractValue* abstractValue = mEntry->values().at(index.row());
+        if(index.column() == 0) {
+            abstractValue->setName(value.toString());
+        } else if(index.column() == 1) {
+            //Todo : Maybe change?
+            if(abstractValue->type() == "plain") {
+                PlainValue* plainValue = static_cast<PlainValue*>(abstractValue);
+                plainValue->setValue(value.toString());
+            } else {
+                CryptedValue* cryptedValue = static_cast<CryptedValue*>(abstractValue);
+                cryptedValue->setValue(QByteArray(),value.toString());
+            }
+        }
+        emit dataChanged(index,index,{role});
+        return true;
+    }
+    return false;
+}
+
+
+Qt::ItemFlags ValuesTableModel::flags(const QModelIndex &) const
+{
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }

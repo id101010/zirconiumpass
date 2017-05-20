@@ -29,7 +29,9 @@ public slots:
     virtual void accept() override;
     virtual int exec() override;
 private slots:
-    void on_pushButton_clicked();
+    void on_pbNewPlain_clicked();
+    void on_pbNewCrypted_clicked();
+    void tableContextMenuRequested(const QPoint &pos);
 };
 
 #endif // ENTRYDIALOG_H

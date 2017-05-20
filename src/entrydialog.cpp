@@ -3,6 +3,8 @@
 #include <QMessageBox>
 #include <QTableView>
 #include "plainvalue.h"
+#include "cryptedvalue.h"
+#include <QMenu>
 
 EntryDialog::EntryDialog(QWidget *parent) :
     QDialog(parent),
@@ -10,6 +12,8 @@ EntryDialog::EntryDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tableView->setModel(&mValuesTableModel);
+    ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView,&QTableView::customContextMenuRequested,this,&EntryDialog::tableContextMenuRequested);
 }
 
 Entry *EntryDialog::entry()
@@ -52,10 +56,41 @@ int EntryDialog::exec()
     return QDialog::exec();
 }
 
-void EntryDialog::on_pushButton_clicked()
+
+
+void EntryDialog::on_pbNewPlain_clicked()
 {
     PlainValue* pv = new PlainValue();
-    pv->setName("aaa");
-    pv->setValue("bbbb");
+    pv->setName(QString("plainvalue%1").arg(mEntry->values().count()+1));
+    pv->setValue("Url or note");
     mEntry->addValue(pv);
+    ui->tableView->edit(mValuesTableModel.index(mValuesTableModel.rowCount({})-1,1));
+}
+
+void EntryDialog::on_pbNewCrypted_clicked()
+{
+    CryptedValue* cv = new CryptedValue();
+    cv->setName(QString("password%1").arg(mEntry->values().count()+1));
+    mEntry->addValue(cv);
+    ui->tableView->edit(mValuesTableModel.index(mValuesTableModel.rowCount({})-1,1));
+}
+
+void EntryDialog::tableContextMenuRequested(const QPoint &pos)
+{
+    QModelIndex mInd =  ui->tableView->indexAt(pos);
+    if(!mInd.isValid())  {
+        return;
+    }
+    AbstractValue* selectedValue = mInd.data(Qt::UserRole).value<AbstractValue*>();
+    if(selectedValue == nullptr) {
+        return;
+    }
+
+    QMenu m;
+    QAction* removeAction = m.addAction("Remove Value");
+
+    QAction* selectedAction = m.exec(ui->tableView->mapToGlobal(pos));
+    if(selectedAction == removeAction) {
+        mEntry->removeValue(selectedValue);
+    }
 }

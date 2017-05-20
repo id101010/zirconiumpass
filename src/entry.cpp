@@ -49,6 +49,17 @@ void Entry::removeValueByName(const QString &name)
     }
 }
 
+void Entry::removeValue(AbstractValue *value)
+{
+    if(value != nullptr){
+        int ind = mValues.indexOf(value);
+        if(ind != -1) {
+            mValues.removeAt(ind);
+            emit valueRemoved(ind);
+        }
+    }
+}
+
 void Entry::addValue(AbstractValue *value)
 {
     Q_ASSERT(value!=nullptr);
