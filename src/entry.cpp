@@ -1,4 +1,6 @@
 #include "entry.h"
+#include "plainvalue.h"
+#include "cryptedvalue.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -79,5 +81,49 @@ QJsonObject Entry::saveToJson() const
 
 bool Entry::loadFromJson(const QJsonObject &obj)
 {
+    /* Load title from json */
+    if(obj["title"].isString()){
+        mTitle = obj["title"].toString();
+    } else {
+        return false;
+    }
 
+    QVector<AbstractValue*> vec;
+
+    /* Load value array from json */
+    if(obj["values"].isArray()){
+        QJsonArray arr = obj["values"].toArray();
+        for(int i=0; i<arr.size(); i++){
+            if(arr.at(i).isObject()){
+                QJsonObject tmp = arr.at(i).toObject();
+                AbstractValue *v;
+
+                /* check if the object is encrypted or plain */
+                if(tmp["type"] == "plain"){
+                    v = new PlainValue();
+                } else if(tmp["type"] == "encrypted"){
+                    v = new CryptedValue();
+                } else {
+                    return false;
+                }
+
+                /* load from json */
+                if(v->loadFromJson(tmp)){
+                    vec.append(v);
+                } else {
+                    return false;
+                }
+
+            } else {
+                return false;
+            }
+        }
+    } else {
+        return false;
+    }
+
+    /* load to local mValues */
+    mValues = vec;
+
+    return true;
 }

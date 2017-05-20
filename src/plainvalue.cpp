@@ -37,6 +37,8 @@ bool PlainValue::loadFromJson(const QJsonObject &obj)
     } else {
         return false;
     }
+
+    return true;
 }
 
 const QString& PlainValue::type() const
