@@ -7,7 +7,7 @@ PlainValue::PlainValue()
 
 const QString &PlainValue::value()
 {
-
+    return mValue;
 }
 
 void PlainValue::setValue(const QString &value)
