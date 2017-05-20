@@ -51,6 +51,7 @@ void MainWindow::closeDatabaseClicked()
 
 //test stuff ahead
 #include "entry.h"
+#include "cryptedvalue.h"
 
 void MainWindow::createNewDatabaseClicked()
 {
@@ -58,6 +59,10 @@ void MainWindow::createNewDatabaseClicked()
     mDatabase = Database::createNew("passw0rd");
     Entry* en = new Entry();
     en->setTitle("Eintrag 1");
+    CryptedValue* cv = new CryptedValue();
+    cv->setValue(mDatabase->protectedStreamKey(),"hans");
+    cv->setName("passwort");
+    en->addValue(cv);
 
     mDatabase->databaseContent().addEntry(en);
     mDatabase->write("test.db");
@@ -67,10 +72,9 @@ void MainWindow::createNewDatabaseClicked()
 
 void MainWindow::createNewEntryClicked()
 {
-    EntryDialog dialog;
+    EntryDialog dialog (mDatabase.get());
     if(dialog.exec() == QDialog::Accepted) {
         mDatabase->databaseContent().addEntry(dialog.entry());
-
     }
 }
 
@@ -99,7 +103,7 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
 
 void MainWindow::editEntry(Entry *entry)
 {
-    EntryDialog dialog;
+    EntryDialog dialog(mDatabase.get());
     dialog.setEntry(entry);
     if(dialog.exec() == QDialog::Accepted) {
         int row = mDatabase->databaseContent().entries().indexOf(entry);

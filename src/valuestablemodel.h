@@ -9,6 +9,7 @@ public:
     virtual ~ValuesTableModel();
 
     void setEntry(class Entry* entry);
+    void setDatabase(class Database* database);
 
 
     virtual int rowCount(const QModelIndex &parent) const override;
@@ -26,6 +27,7 @@ private slots:
     void valueRemoved(int ind);
 private:
     class Entry* mEntry;
+    class Database* mDatabase;
 
 
 

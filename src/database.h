@@ -21,6 +21,8 @@ class Database
         DatabaseContent& databaseContent();
         const DatabaseContent& databaseContent() const;
 
+        const QByteArray& protectedStreamKey() const;
+
         void setFactory(QSharedPointer<DatabaseFactory> factory);
 
     private:

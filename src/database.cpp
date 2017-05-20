@@ -174,6 +174,11 @@ const DatabaseContent& Database::databaseContent() const
     return mDatabaseContent;
 }
 
+const QByteArray &Database::protectedStreamKey() const
+{
+    return mProtectedStreamKey;
+}
+
 void Database::setFactory(QSharedPointer<DatabaseFactory> factory)
 {
     mDatabaseContent.setFactory(factory);

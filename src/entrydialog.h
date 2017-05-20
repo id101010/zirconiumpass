@@ -14,7 +14,7 @@ class EntryDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EntryDialog(QWidget *parent = 0);
+    explicit EntryDialog(class Database *database);
     Entry* entry();
     void setEntry(Entry* entry);
     ~EntryDialog();
@@ -23,6 +23,7 @@ private:
     Ui::EntryDialog *ui;
     Entry* mEntry;
     ValuesTableModel mValuesTableModel;
+    class Database* mDatabase;
 
     // QDialog interface
 public slots:

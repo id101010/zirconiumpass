@@ -6,13 +6,15 @@
 #include "plainvalue.h"
 #include "cryptedvalue.h"
 #include <QMenu>
-#include "QTimer"
+#include <QTimer>
+#include "database.h"
 
-EntryDialog::EntryDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::EntryDialog), mEntry(nullptr)
+EntryDialog::EntryDialog(Database* database) :
+    QDialog(),
+    ui(new Ui::EntryDialog), mEntry(nullptr), mDatabase(database)
 {
     ui->setupUi(this);
+    mValuesTableModel.setDatabase(database);
     ui->tableView->setModel(&mValuesTableModel);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView,&QTableView::customContextMenuRequested,this,&EntryDialog::tableContextMenuRequested);
@@ -99,19 +101,19 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
     if(selectedAction == copyAction) {
         if(selectedValue->type() == "plain"){
             clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
-            QTimer::singleShot(20000, [clipboard](){
+            QTimer::singleShot(10000, [clipboard](){
                 clipboard->clear();
             });
         }
         if(selectedValue->type() == "encrypted"){
-            static_cast<CryptedValue*>(selectedValue)->decrypt(QByteArray(), [](const char* data, size_t size){
+            static_cast<CryptedValue*>(selectedValue)->decrypt(mDatabase->protectedStreamKey(), [](const char* data, size_t size){
 
                 QString password = QString::fromLocal8Bit(data,size);
                 QClipboard *clipboard = QApplication::clipboard();
 
                 clipboard->setText(password);
 
-                QTimer::singleShot(20000, [clipboard](){
+                QTimer::singleShot(10000, [clipboard](){
                     clipboard->clear();
                 });
             });

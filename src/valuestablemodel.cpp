@@ -4,14 +4,19 @@
 #include "plainvalue.h"
 #include "cryptedvalue.h"
 #include <QDebug>
+#include "database.h"
 
-ValuesTableModel::ValuesTableModel() : mEntry(nullptr)
+ValuesTableModel::ValuesTableModel() : mEntry(nullptr), mDatabase(nullptr)
 {
 }
 
 ValuesTableModel::~ValuesTableModel()
 {
 
+}
+
+void ValuesTableModel::setDatabase(Database *database) {
+    mDatabase  = database;
 }
 
 void ValuesTableModel::setEntry(Entry *entry)
@@ -79,6 +84,7 @@ QVariant ValuesTableModel::headerData(int section, Qt::Orientation orientation, 
     } else if (section==1) {
         return "Value";
     }
+    return QVariant();
 }
 
 void ValuesTableModel::valueAdded(int ind)
@@ -110,7 +116,7 @@ bool ValuesTableModel::setData(const QModelIndex &index, const QVariant &value, 
                 plainValue->setValue(value.toString());
             } else {
                 CryptedValue* cryptedValue = static_cast<CryptedValue*>(abstractValue);
-                cryptedValue->setValue(QByteArray(),value.toString());
+                cryptedValue->setValue(mDatabase->protectedStreamKey(),value.toString());
             }
         }
         emit dataChanged(index,index,{role});

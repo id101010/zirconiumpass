@@ -1,6 +1,9 @@
 #include "cryptedvalue.h"
 
 #include <QJsonArray>
+#include <QBuffer>
+#include "crypto/SymmetricCipherStream.h"
+#include <QDebug>
 
 CryptedValue::CryptedValue()
 {
@@ -9,12 +12,70 @@ CryptedValue::CryptedValue()
 
 void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (const char *, size_t)> visitor)
 {
+    QBuffer buf;
+    buf.setData(mValue);
+    if(!buf.open(QIODevice::ReadOnly)) {
+        return;
+    }
 
+    QByteArray iv ="E830094B97205D2A";
+    iv = QByteArray::fromHex(iv);
+
+    SymmetricCipherStream stream(&buf,SymmetricCipher::Salsa20,SymmetricCipher::Stream, SymmetricCipher::Decrypt);
+    if(!stream.init(streamkey,iv)) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    if(!stream.open(QIODevice::ReadOnly)) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    QByteArray outDecrypted = stream.readAll();
+    if(outDecrypted.isEmpty()) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    stream.close();
+    buf.close();
+
+    visitor(outDecrypted.constData(),outDecrypted.length()); //let visitor look at it
+
+    outDecrypted.fill('0'); //overwrite memory
 }
 
 void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
 {
+    QByteArray newCryptedValue;
+    QBuffer buf(&newCryptedValue);
+    if(!buf.open(QIODevice::WriteOnly)) {
+        return;
+    }
 
+    QByteArray iv ="E830094B97205D2A";
+    iv = QByteArray::fromHex(iv);
+
+    SymmetricCipherStream stream(&buf,SymmetricCipher::Salsa20,SymmetricCipher::Stream, SymmetricCipher::Encrypt);
+    if(!stream.init(streamkey,iv)) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    if(!stream.open(QIODevice::WriteOnly)) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    if(stream.write(value.toLocal8Bit()) == -1) {
+        qWarning() << stream.errorString();
+        return;
+    }
+
+    stream.close();
+    buf.close();
+    mValue = newCryptedValue;
 }
 
 QJsonObject CryptedValue::saveToJson() const
