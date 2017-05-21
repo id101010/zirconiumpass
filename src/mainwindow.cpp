@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "databaseopendialog.h"
+#include "databasedialog.h"
 #include "entrydialog.h"
 #include <QAction>
 #include <QTableView>
@@ -43,7 +43,7 @@ void MainWindow::openDatabaseClicked()
     if(closeDatabaseClicked()) { //closedatabase was cancelled
         return;
     }
-    DatabaseOpenDialog dialog;
+    DatabaseDialog dialog;
     if(dialog.exec() == QDialog::Accepted) {
         mDatabase = dialog.database();
         if(mDatabase) {
@@ -51,8 +51,7 @@ void MainWindow::openDatabaseClicked()
             ui->actionSave->setEnabled(true);
             ui->actionCreateNewEntry->setEnabled(true);
             mEntriesModel.setDatabase(mDatabase.get());
-
-            //Todo: store database path to member variable, so that we can use in the save function
+            mDatabasePath = dialog.filename();
         }
     }
 }
@@ -91,17 +90,21 @@ void MainWindow::createNewDatabaseClicked()
     if(closeDatabaseClicked()) { //closedatabase was cancelled
         return;
     }
-    ui->actionClose->setEnabled(true);
-    ui->actionCreateNewEntry->setEnabled(true);
-    ui->actionSave->setEnabled(true);
-
-    //TODO: Use databaseopen dialog to enter a initial password and path (save path to member variable)
-    mDatabase = Database::createNew("passw0rd");
-    QMessageBox::information(this,"New database created", "A new database has been created. Start creating an entry. And press CTRL+S to save it to test.db",QMessageBox::Ok);
 
 
-    mEntriesModel.setDatabase(mDatabase.get());
-    unsavedChanges = true;
+    DatabaseDialog dialog;
+    dialog.setMode(DatabaseDialog::Mode::CreateNew);
+    if(dialog.exec() == QDialog::Accepted) {
+        mDatabase = dialog.database();
+        if(mDatabase) {
+            ui->actionClose->setEnabled(true);
+            ui->actionCreateNewEntry->setEnabled(true);
+            ui->actionSave->setEnabled(true);
+            mEntriesModel.setDatabase(mDatabase.get());
+            mDatabasePath = dialog.filename();
+            unsavedChanges = true;
+        }
+    }
 }
 
 
@@ -117,7 +120,7 @@ void MainWindow::createNewEntryClicked()
 void MainWindow::saveDatabaseClicked()
 {
     if(mDatabase) {
-        mDatabase->write("test.db"); //TODO: use dynamic save path
+        mDatabase->write(mDatabasePath);
         unsavedChanges = false;
     }
 }
@@ -263,7 +266,6 @@ void MainWindow::deleteEntry(Entry* entry) {
         }
     }
 }
-
 
 
 void MainWindow::closeEvent(QCloseEvent *event)

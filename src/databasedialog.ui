@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DatabaseOpenDialog</class>
- <widget class="QDialog" name="DatabaseOpenDialog">
+ <class>DatabaseDialog</class>
+ <widget class="QDialog" name="DatabaseDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>96</height>
+    <height>120</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,7 +69,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DatabaseOpenDialog</receiver>
+   <receiver>DatabaseDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -85,7 +85,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DatabaseOpenDialog</receiver>
+   <receiver>DatabaseDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

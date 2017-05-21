@@ -13,7 +13,6 @@ TEMPLATE = lib
 SOURCES += mainwindow.cpp \
         database.cpp \
         masterkey.cpp \
-        databaseopendialog.cpp \
         databasecontent.cpp \
         entriestablemodel.cpp \
         entry.cpp \
@@ -21,12 +20,12 @@ SOURCES += mainwindow.cpp \
         cryptedvalue.cpp \
         plainvalue.cpp \
         entrydialog.cpp \
-        valuestablemodel.cpp
+        valuestablemodel.cpp \
+        databasedialog.cpp
 
 HEADERS += mainwindow.h \
         database.h \
         masterkey.h \
-        databaseopendialog.h \
         databasecontent.h \
         jsonserializable.h \
         entriestablemodel.h \
@@ -35,11 +34,12 @@ HEADERS += mainwindow.h \
         cryptedvalue.h \
         plainvalue.h \
         entrydialog.h \
-        valuestablemodel.h
+        valuestablemodel.h \
+        databasedialog.h
 
 FORMS += mainwindow.ui \
-         databaseopendialog.ui \
-         entrydialog.ui
+         entrydialog.ui \
+        databasedialog.ui
 
 
 # Crypto stuff from KeepassXC ahead
@@ -63,6 +63,7 @@ HEADERS+=   crypto/Crypto.h \
             crypto/Uuid.h \
             crypto/SymmetricCipherStream.h \
             crypto/LayeredStream.h
+
 DESTDIR = $$PWD/../build/
 
 LIBS+= -lgcrypt

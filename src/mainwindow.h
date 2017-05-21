@@ -38,6 +38,7 @@ private:
     bool unsavedChanges;
     EntriesTableModel mEntriesModel;
     std::unique_ptr<Database> mDatabase;
+    QString mDatabasePath;
 
     void editEntry(Entry* entry);
     void deleteEntry(Entry *entry);
