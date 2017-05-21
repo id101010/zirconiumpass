@@ -57,7 +57,7 @@ QVariant ValuesTableModel::data(const QModelIndex &index, int role) const
             if(col == 0) {
                 return abstractValue->name();
             } else if(col==1) {
-                if(role == Qt::EditRole && (abstractValue->isEmpty() || abstractValue->type() != "plain")) {
+                if(role == Qt::EditRole && (abstractValue->isEmpty() || abstractValue->type() != AbstractValue::Type::Plain)) {
                     return ""; // do not return real password in case its a crypted value. just let the user start with an empty one
                 }
                 return abstractValue->displayValue();
@@ -105,12 +105,14 @@ bool ValuesTableModel::setData(const QModelIndex &index, const QVariant &value, 
             abstractValue->setName(value.toString());
         } else if(index.column() == 1) {
             //Todo : Maybe change?
-            if(abstractValue->type() == "plain") {
+            if(abstractValue->type() == AbstractValue::Type::Plain) {
                 PlainValue* plainValue = static_cast<PlainValue*>(abstractValue);
                 plainValue->setValue(value.toString());
-            } else {
+            } else if(abstractValue->type() == AbstractValue::Type::Encrypted){
                 CryptedValue* cryptedValue = static_cast<CryptedValue*>(abstractValue);
                 cryptedValue->setValue(mDatabase->protectedStreamKey(),value.toString());
+            } else {
+                qCritical() << "unknown value type";
             }
         }
         emit dataChanged(index,index,{role});

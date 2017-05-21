@@ -41,10 +41,9 @@ bool PlainValue::loadFromJson(const QJsonObject &obj)
     return true;
 }
 
-const QString& PlainValue::type() const
+AbstractValue::Type PlainValue::type() const
 {
-    static QString store = "plain";
-    return store;
+    return AbstractValue::Type::Plain;
 }
 
 

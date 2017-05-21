@@ -136,10 +136,9 @@ bool CryptedValue::loadFromJson(const QJsonObject &obj)
     return true;
 }
 
-const QString &CryptedValue::type() const
+AbstractValue::Type CryptedValue::type() const
 {
-    static QString store = "encrypted";
-    return store;
+    return AbstractValue::Type::Encrypted;
 }
 
 bool CryptedValue::isEmpty() const
