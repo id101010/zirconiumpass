@@ -20,7 +20,7 @@ public:
 
 public slots:
     void openDatabaseClicked();
-    void closeDatabaseClicked();
+    bool closeDatabaseClicked();
     void createNewDatabaseClicked();
     void createNewEntryClicked();
     void saveDatabaseClicked();
@@ -29,11 +29,15 @@ public slots:
     void tableHeaderContextMenuRequested(const QPoint &pos);
 
 private:
-    void editEntry(Entry* entry);
-    EntriesTableModel mEntriesModel;
     Ui::MainWindow *ui;
+    bool unsavedChanges;
+    EntriesTableModel mEntriesModel;
     std::unique_ptr<Database> mDatabase;
 
+    void editEntry(Entry* entry);
+
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

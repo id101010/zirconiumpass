@@ -6,10 +6,12 @@
 #include <QTableView>
 #include <QMenu>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), unsavedChanges(false)
 {
     ui->setupUi(this);
     ui->actionClose->setEnabled(false);
@@ -34,6 +36,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::openDatabaseClicked()
 {
+    if(closeDatabaseClicked()) { //closedatabase was cancelled
+        return;
+    }
     DatabaseOpenDialog dialog;
     if(dialog.exec() == QDialog::Accepted) {
         mDatabase = dialog.database();
@@ -48,25 +53,49 @@ void MainWindow::openDatabaseClicked()
     }
 }
 
-void MainWindow::closeDatabaseClicked()
+bool MainWindow::closeDatabaseClicked()
 {
     if(mDatabase) {
+
+        if(unsavedChanges) {
+            int result = QMessageBox::warning(this, "Unsaved changes", "You have unsaved changes. Do you want to save the database before closing it?", QMessageBox::Yes| QMessageBox::No | QMessageBox::Cancel,QMessageBox::Yes);
+            if(result == QMessageBox::Yes) { //save
+                saveDatabaseClicked();
+            } else if (result == QMessageBox::No) { //discard
+               // no save here, close code below
+            } else if (result == QMessageBox::Cancel) {
+                return true; //close cancelled
+            }
+        }
+
+        //Closing database
         mEntriesModel.setDatabase(nullptr);
         mDatabase.reset();
         ui->actionClose->setEnabled(false);
         ui->actionSave->setEnabled(false);
         ui->actionCreateNewEntry->setEnabled(false);
+        unsavedChanges = false;
     }
+    return false; //close was not canceled
 }
 
 
 void MainWindow::createNewDatabaseClicked()
 {
-    closeDatabaseClicked();
+    if(closeDatabaseClicked()) { //closedatabase was cancelled
+        return;
+    }
     ui->actionClose->setEnabled(true);
     ui->actionCreateNewEntry->setEnabled(true);
     ui->actionSave->setEnabled(true);
-    mDatabase = Database::createNew("passw0rd"); //TODO: Use databaseopen dialog to enter a initial password and path (save path to member variable)
+
+    //TODO: Use databaseopen dialog to enter a initial password and path (save path to member variable)
+    mDatabase = Database::createNew("passw0rd");
+    QMessageBox::information(this,"New database created", "A new database has been created. Start creating an entry. And press CTRL+S to save it to test.db",QMessageBox::Ok);
+
+
+    mEntriesModel.setDatabase(mDatabase.get());
+    unsavedChanges = true;
 }
 
 
@@ -75,6 +104,7 @@ void MainWindow::createNewEntryClicked()
     EntryDialog dialog (mDatabase.get());
     if(dialog.exec() == QDialog::Accepted) {
         mDatabase->databaseContent().addEntry(dialog.entry());
+        unsavedChanges = true;
     }
 }
 
@@ -82,6 +112,7 @@ void MainWindow::saveDatabaseClicked()
 {
     if(mDatabase) {
         mDatabase->write("test.db"); //TODO: use dynamic save path
+        unsavedChanges = false;
     }
 }
 
@@ -137,6 +168,7 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
         editEntry(selectedEntry);
     } else if(selectedAction == removeAction) {
         mDatabase->databaseContent().removeEntry(selectedEntry);
+        unsavedChanges = true;
     } else if(selectedAction == copyAction ) {
         EntryDialog::copyToClipboard(selectedValue,mDatabase.get());
     }
@@ -195,7 +227,19 @@ void MainWindow::editEntry(Entry *entry)
 
             //or implement update signals in entry class  and connect them to slot in model...
         }
+        unsavedChanges = true;
     }
 }
 
 
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    bool shouldCancel = closeDatabaseClicked();
+    if(shouldCancel) {
+        event->ignore();
+    } else {
+        QMainWindow::closeEvent(event);
+    }
+}
