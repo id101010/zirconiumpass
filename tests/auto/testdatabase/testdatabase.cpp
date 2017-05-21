@@ -5,7 +5,7 @@
 #include "crypto/Crypto.h"
 #include "database.h"
 
-TestDatabase::TestDatabase(QObject *parent) : QObject(parent), factory(new TestDatabase::Factory())
+TestDatabase::TestDatabase(QObject *parent) : QObject(parent), factory(new TestFactory())
 {
 
 }
@@ -38,7 +38,7 @@ void TestDatabase::testSingleEntryCreateLoad()
     obj1["a"]= 13;
     obj1["b"] = 3.141;
     obj1["c"] = "hallo";
-    DummyEntry dummy1;
+    DummyEntry dummy1(factory);
     dummy1.jsonobject = obj1;
 
     //Append dummy entry to Database content
@@ -80,7 +80,7 @@ void TestDatabase::testMultiEntryCreateLoad()
         QJsonObject obj;
         obj["a"]= qrand();
         obj["b"] = qrand()/13.9+qrand();
-        DummyEntry* dummy = new DummyEntry();
+        DummyEntry* dummy = new DummyEntry(factory);
         dummy->jsonobject = obj;
         dummies.append(dummy);
         d->databaseContent().addEntry(dummy);

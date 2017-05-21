@@ -6,8 +6,14 @@
 #include <QJsonDocument>
 #include <QString>
 #include <QDebug>
+#include <QMetaEnum>
 
-Entry::Entry()
+Entry::Entry(QSharedPointer<Factory> factory) : mFactory(factory)
+{
+
+}
+
+Entry::~Entry()
 {
 
 }
@@ -107,14 +113,18 @@ bool Entry::loadFromJson(const QJsonObject &obj)
         for(int i=0; i<arr.size(); i++){
             if(arr.at(i).isObject()){
                 QJsonObject tmp = arr.at(i).toObject();
-                AbstractValue *v;
 
-                /* check if the object is encrypted or plain */
-                if(tmp["type"] == "plain"){
-                    v = new PlainValue();
-                } else if(tmp["type"] == "encrypted"){
-                    v = new CryptedValue();
-                } else {
+                //Convert type string into enum using QMetaEnum reflection magic
+                QMetaEnum me = QMetaEnum::fromType<AbstractValue::Type>();
+                bool castOk = false;
+                AbstractValue::Type type = static_cast<AbstractValue::Type>(me.keyToValue(tmp["type"].toString().toStdString().c_str(),&castOk));
+                if(!castOk) {
+                    return false;
+                }
+
+                //Create correct AbstractValue subclass via factory
+                AbstractValue *v = mFactory->createValue(type);
+                if(v == nullptr) {
                     return false;
                 }
 

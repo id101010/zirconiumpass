@@ -21,7 +21,8 @@ SOURCES += mainwindow.cpp \
         plainvalue.cpp \
         entrydialog.cpp \
         valuestablemodel.cpp \
-        databasedialog.cpp
+        databasedialog.cpp \
+        factory.cpp
 
 HEADERS += mainwindow.h \
         database.h \
@@ -35,11 +36,12 @@ HEADERS += mainwindow.h \
         plainvalue.h \
         entrydialog.h \
         valuestablemodel.h \
-        databasedialog.h
+        databasedialog.h \
+        factory.h
 
 FORMS += mainwindow.ui \
          entrydialog.ui \
-        databasedialog.ui
+         databasedialog.ui
 
 
 # Crypto stuff from KeepassXC ahead

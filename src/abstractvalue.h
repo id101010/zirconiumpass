@@ -6,15 +6,22 @@
 
 class AbstractValue : public JsonSerializable
 {
+    Q_GADGET //needed for Q_ENUM
     private:
         QString mName;
     public:
+        enum class Type {
+            encrypted,
+            plain
+        };
+        Q_ENUM(Type)
+
         AbstractValue();
         const QString& name() const;
         void setName(const QString& name);
         QJsonObject saveToJson() const override;
         bool loadFromJson(const QJsonObject &obj) override;
-        virtual const QString& type(void) const = 0;
+        virtual Type type() const = 0;
         virtual QString displayValue() const = 0;
         virtual bool isEmpty() const = 0;
 };

@@ -24,6 +24,10 @@ QJsonObject PlainValue::saveToJson() const
 
 bool PlainValue::loadFromJson(const QJsonObject &obj)
 {
+    if(!AbstractValue::loadFromJson(obj)) {
+        return false;
+    }
+
     /* try to load plainValue */
     if(obj["plainValue"].isString()){
         mValue = obj["plainValue"].toString();
@@ -31,20 +35,12 @@ bool PlainValue::loadFromJson(const QJsonObject &obj)
         return false;
     }
 
-    /* try to load name */
-    if(obj["name"].isString()){
-        this->setName(obj["name"].toString());
-    } else {
-        return false;
-    }
-
     return true;
 }
 
-const QString& PlainValue::type() const
+AbstractValue::Type PlainValue::type() const
 {
-    static QString store = "plain";
-    return store;
+    return AbstractValue::Type::plain;
 }
 
 

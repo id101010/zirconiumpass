@@ -14,7 +14,7 @@ class CryptedValue : public AbstractValue
         void setValue(const QByteArray& streamkey, const QString& value);
         virtual QJsonObject saveToJson() const override;
         virtual bool loadFromJson(const QJsonObject &obj) override;
-        virtual const QString &type() const override;
+        virtual AbstractValue::Type type() const override;
         virtual QString displayValue() const override;
         virtual bool isEmpty() const override;
 

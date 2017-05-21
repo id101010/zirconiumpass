@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QTimer>
 #include "database.h"
+#include <QDebug>
 
 EntryDialog::EntryDialog(Database* database) :
     QDialog(),
@@ -38,13 +39,12 @@ EntryDialog::~EntryDialog()
 void EntryDialog::copyToClipboard(AbstractValue *selectedValue, Database* database)
 {
     QClipboard *clipboard = QApplication::clipboard();
-    if(selectedValue->type() == "plain"){
+    if(selectedValue->type() == AbstractValue::Type::plain){
         clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
         QTimer::singleShot(10000, [clipboard](){
             clipboard->clear();
         });
-    }
-    if(selectedValue->type() == "encrypted"){
+    } else if(selectedValue->type() == AbstractValue::Type::encrypted){
         static_cast<CryptedValue*>(selectedValue)->decrypt(database->protectedStreamKey(), [](const QString& password){
             QClipboard *clipboard = QApplication::clipboard();
 
@@ -54,6 +54,8 @@ void EntryDialog::copyToClipboard(AbstractValue *selectedValue, Database* databa
                 clipboard->clear();
             });
         });
+    } else {
+        qCritical() << "unknown value type";
     }
 }
 
@@ -71,7 +73,7 @@ void EntryDialog::accept()
 int EntryDialog::exec()
 {
     if(mEntry == nullptr) {
-        mEntry = new Entry();
+        mEntry = new Entry(mDatabase->factory());
         this->setWindowTitle("Create new Entry");
     } else {
         ui->leTitle->setText(mEntry->title());
