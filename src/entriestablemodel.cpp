@@ -45,22 +45,36 @@ int EntriesTableModel::columnCount(const QModelIndex &) const
 
 QVariant EntriesTableModel::data(const QModelIndex &index, int role) const
 {
+    //We implement the following behaviour:
+    // If the user requests the DisplayRole: Show him the title, the display value or "<no such value>"
+    // if the user requests UserRole: Return him the Entry (for the 'title' column) or the AbtractValue (for any 'value' column)
+
+
     if(mDatabase) {
         Entry* entry = mDatabase->databaseContent().entries().at(index.row());
-        if(role == Qt::UserRole) {
-            return QVariant::fromValue(entry);
-        } else if(role == Qt::DisplayRole) {
-            int col = index.column();
-            if(col == 0) {
-               return entry->title();
-            } else {
-               AbstractValue* value = entry->valueByName(mAdditionalColumns[col-1]);
-               if(value != nullptr) {
-                   return value->displayValue();
-               } else {
-                   return "<no such value>";
-               }
+        int col = index.column();
+        if(col == 0) { // title column
+            if(role == Qt::UserRole) {
+                return QVariant::fromValue(entry);
+            } else if(role == Qt::DisplayRole) {
+                return entry->title();
             }
+        } else { // value column
+           AbstractValue* value = entry->valueByName(mAdditionalColumns[col-1]);
+           if(value != nullptr) {
+               if(role == Qt::UserRole) {
+                   return QVariant::fromValue(value);
+               } else if(role == Qt::DisplayRole) {
+                    return value->displayValue();
+               }
+           } else {
+               if(role == Qt::UserRole) {
+                   return QVariant();
+               } else if(role == Qt::DisplayRole) {
+                  return "<no such value>";
+               }
+
+           }
         }
     }
 

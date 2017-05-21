@@ -92,20 +92,53 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
     if(!mInd.isValid())  {
         return;
     }
-    Entry* selectedEntry = mInd.data(Qt::UserRole).value<Entry*>(); //Get entry for index from model (by using custom role)
-    if(selectedEntry == nullptr) {
+
+    int column = mInd.column();
+    if(column <0 || column >= mEntriesModel.columnCount({})) {
+            return;
+    }
+
+
+    QMenu m;
+    QAction* copyAction = nullptr;
+    AbstractValue* selectedValue = nullptr;
+
+    if(column != 0) { //not title column
+        copyAction = m.addAction("Copy "+mEntriesModel.headerData(column,Qt::Horizontal,Qt::DisplayRole).toString());
+        QFont f = copyAction->font();
+        f.setBold(true);
+        copyAction->setFont(f);
+
+        selectedValue = mInd.data(Qt::UserRole).value<AbstractValue*>();
+        if(selectedValue == nullptr) {
+            copyAction->setEnabled(false);
+        }
+    }
+
+
+    QAction* editAction = m.addAction("Edit Entry...");
+    QAction* removeAction = m.addAction("Remove Entry");
+    if(column== 0) { //title column
+        QFont f = editAction->font();
+        f.setBold(true);
+        editAction->setFont(f);
+    }
+
+
+    QAction* selectedAction = m.exec(ui->tableView->mapToGlobal(pos));
+    if(selectedAction == nullptr) {
         return;
     }
 
-    QMenu m;
-    QAction* editAction = m.addAction("Edit Entry");
-    QAction* removeAction = m.addAction("Remove Entry");
+     //Get entry be requesting UserRole data from Title cell
+     Entry* selectedEntry = mEntriesModel.data(mEntriesModel.index(mInd.row(),0,{}),Qt::UserRole).value<Entry*>();
 
-    QAction* selectedAction = m.exec(ui->tableView->mapToGlobal(pos));
     if(selectedAction == editAction) {
         editEntry(selectedEntry);
     } else if(selectedAction == removeAction) {
         mDatabase->databaseContent().removeEntry(selectedEntry);
+    } else if(selectedAction == copyAction ) {
+        EntryDialog::copyToClipboard(selectedValue,mDatabase.get());
     }
 }
 
@@ -140,6 +173,11 @@ void MainWindow::entryDoubleClicked(const QModelIndex &index)
     if(index.isValid()) {
         if(index.column() == 0) { //Title clicked
             editEntry(index.data(Qt::UserRole).value<Entry*>());
+        } else { //value clicked
+            AbstractValue* value = index.data(Qt::UserRole).value<AbstractValue*>();
+            if(value!=nullptr) {
+                 EntryDialog::copyToClipboard(value,mDatabase.get());
+            }
         }
     }
 }
@@ -147,11 +185,16 @@ void MainWindow::entryDoubleClicked(const QModelIndex &index)
 
 void MainWindow::editEntry(Entry *entry)
 {
-    EntryDialog dialog(mDatabase.get());
-    dialog.setEntry(entry);
-    if(dialog.exec() == QDialog::Accepted) {
-        int row = mDatabase->databaseContent().entries().indexOf(entry);
-        emit mEntriesModel.dataChanged(mEntriesModel.index(row,0),mEntriesModel.index(row,mEntriesModel.columnCount({})-1));
+    if(entry!=nullptr) {
+        EntryDialog dialog(mDatabase.get());
+        dialog.setEntry(entry);
+        if(dialog.exec() == QDialog::Accepted) {
+            //View should auto-rerequest data from model. If it doesnt, uncomment the following hack
+            // int row = mDatabase->databaseContent().entries().indexOf(entry);
+            // emit mEntriesModel.dataChanged(mEntriesModel.index(row,0),mEntriesModel.index(row,mEntriesModel.columnCount({})-1));
+
+            //or implement update signals in entry class  and connect them to slot in model...
+        }
     }
 }
 

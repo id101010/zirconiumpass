@@ -35,6 +35,28 @@ EntryDialog::~EntryDialog()
     delete ui;
 }
 
+void EntryDialog::copyToClipboard(AbstractValue *selectedValue, Database* database)
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    if(selectedValue->type() == "plain"){
+        clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
+        QTimer::singleShot(10000, [clipboard](){
+            clipboard->clear();
+        });
+    }
+    if(selectedValue->type() == "encrypted"){
+        static_cast<CryptedValue*>(selectedValue)->decrypt(database->protectedStreamKey(), [](const QString& password){
+            QClipboard *clipboard = QApplication::clipboard();
+
+            clipboard->setText(password);
+
+            QTimer::singleShot(10000, [clipboard](){
+                clipboard->clear();
+            });
+        });
+    }
+}
+
 void EntryDialog::accept()
 {
     if(ui->leTitle->text().trimmed().isEmpty()) {
@@ -91,7 +113,6 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
     QMenu m;
     QAction* removeAction = m.addAction("Remove Value");
     QAction* copyAction = m.addAction("Copy Value");
-    QClipboard *clipboard = QApplication::clipboard();
 
     QAction* selectedAction = m.exec(ui->tableView->mapToGlobal(pos));
 
@@ -100,22 +121,6 @@ void EntryDialog::tableContextMenuRequested(const QPoint &pos)
     }
 
     if(selectedAction == copyAction) {
-        if(selectedValue->type() == "plain"){
-            clipboard->setText(static_cast<PlainValue*>(selectedValue)->value());
-            QTimer::singleShot(10000, [clipboard](){
-                clipboard->clear();
-            });
-        }
-        if(selectedValue->type() == "encrypted"){
-            static_cast<CryptedValue*>(selectedValue)->decrypt(mDatabase->protectedStreamKey(), [](const QString& password){
-                QClipboard *clipboard = QApplication::clipboard();
-
-                clipboard->setText(password);
-
-                QTimer::singleShot(10000, [clipboard](){
-                    clipboard->clear();
-                });
-            });
-        }
+        copyToClipboard(selectedValue,mDatabase);
     }
 }

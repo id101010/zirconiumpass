@@ -18,6 +18,7 @@ public:
     Entry* entry();
     void setEntry(Entry* entry);
     ~EntryDialog();
+    static void copyToClipboard(class AbstractValue* abstractValue, class Database* database);
 
 private:
     Ui::EntryDialog *ui;
