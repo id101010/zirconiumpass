@@ -138,7 +138,7 @@ bool CryptedValue::loadFromJson(const QJsonObject &obj)
 
 AbstractValue::Type CryptedValue::type() const
 {
-    return AbstractValue::Type::Encrypted;
+    return AbstractValue::Type::encrypted;
 }
 
 bool CryptedValue::isEmpty() const

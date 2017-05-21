@@ -6,17 +6,11 @@
 #include <QSharedPointer>
 #include "entry.h"
 
-
-struct DatabaseFactory {
-    virtual ~DatabaseFactory();
-    virtual Entry* createEntry();
-};
-
 class DatabaseContent : public QObject
 {
     Q_OBJECT
 public:
-    DatabaseContent(QSharedPointer<DatabaseFactory> factory);
+    DatabaseContent(QSharedPointer<Factory> factory);
 
     bool encrypt(const Masterkey& masterkey);
     bool decrypt(const Masterkey& masterkey);
@@ -38,14 +32,14 @@ public:
     void removeEntry(Entry* entry);
 
 
-    void setFactory(QSharedPointer<DatabaseFactory> factory); //for testing purposes
+    void setFactory(QSharedPointer<Factory> factory); //for testing purposes
 
  signals:
     void entryAdded(int index);
     void entryRemoved(int index);
 
  private:
-    QSharedPointer<DatabaseFactory> mFactory;
+    QSharedPointer<Factory> mFactory;
     QVector<Entry*> mEntries;
     QByteArray mCrypted;
     QByteArray mEncryptionIv;

@@ -3,17 +3,20 @@
 
 #include "abstractvalue.h"
 #include "jsonserializable.h"
+#include "factory.h"
 
 #include <QString>
 #include <QVector>
 #include <QMetaType>
 #include <QObject>
+#include <QSharedPointer>
 
 class Entry : public QObject, public JsonSerializable
 {
     Q_OBJECT
     public:
-        Entry();
+        Entry(QSharedPointer<Factory> factory);
+        virtual ~Entry();
         const QString& title();
         void setTitle(const QString &title);
         QVector<AbstractValue*> values();
@@ -26,6 +29,7 @@ class Entry : public QObject, public JsonSerializable
     private:
         QString mTitle;
         QVector<AbstractValue*> mValues;
+        QSharedPointer<struct Factory> mFactory;
     signals:
         void valueAdded(int index);
         void valueRemoved(int index);

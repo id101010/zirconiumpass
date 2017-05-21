@@ -23,13 +23,15 @@ class Database
 
         const QByteArray& protectedStreamKey() const;
 
-        void setFactory(QSharedPointer<DatabaseFactory> factory);
+        void setFactory(QSharedPointer<Factory> factory);
+        QSharedPointer<Factory>  factory() const;
 
     private:
         Database();
         bool encrypt();
         QByteArray mProtectedStreamKey;
         Masterkey mMasterKey;
+        QSharedPointer<Factory> mFactory;
         DatabaseContent mDatabaseContent;
 
 };

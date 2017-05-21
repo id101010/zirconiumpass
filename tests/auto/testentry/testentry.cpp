@@ -2,6 +2,7 @@
 #include <QJsonArray>
 #include <QTest>
 #include <cryptedvalue.h>
+#include <databasecontent.h>
 #include <plainvalue.h>
 #include "crypto/Random.h"
 #include "crypto/Crypto.h"
@@ -18,9 +19,11 @@ void TestEntry::initTestCase()
 
 void TestEntry::testSinglePlainValue()
 {
+    QSharedPointer<Factory> factory =  QSharedPointer<Factory>::create();
+
     /* ------------- Save ------------- */
 
-    Entry saveEntry;
+    Entry saveEntry(factory);
     saveEntry.setTitle("testplain");
 
     PlainValue *v = new PlainValue();
@@ -44,7 +47,7 @@ void TestEntry::testSinglePlainValue()
 
     /* ------------- Load ------------- */
 
-    Entry loadEntry;
+    Entry loadEntry(factory);
     QCOMPARE(loadEntry.loadFromJson(entryJson), true);
     QCOMPARE(loadEntry.title(), saveEntry.title());
     QCOMPARE(loadEntry.values().count(), saveEntry.values().count());
@@ -60,12 +63,14 @@ void TestEntry::testSinglePlainValue()
 
 void TestEntry::testSingleCryptedValue()
 {
+    QSharedPointer<Factory> factory =  QSharedPointer<Factory>::create();
+
     /* ------------- Save ------------- */
 
     QByteArray streamKey = randomGen()->randomArray(32);
     QString pw = "secretpassw0rt";
 
-    Entry saveEntry;
+    Entry saveEntry(factory);
     saveEntry.setTitle("testcrypted");
 
     CryptedValue *v = new CryptedValue();
@@ -101,7 +106,7 @@ void TestEntry::testSingleCryptedValue()
 
     /* ------------- Load ------------- */
 
-    Entry loadEntry;
+    Entry loadEntry(factory);
     QCOMPARE(loadEntry.loadFromJson(entryJson), true);
     QCOMPARE(loadEntry.title(), saveEntry.title());
     QCOMPARE(loadEntry.values().count(), saveEntry.values().count());

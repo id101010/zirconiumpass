@@ -4,8 +4,9 @@
 #include <QJsonArray>
 #include <QDebug>
 #include "entry.h"
+#include "factory.h"
 
-DatabaseContent::DatabaseContent(QSharedPointer<DatabaseFactory> factory) : mFactory(factory)
+DatabaseContent::DatabaseContent(QSharedPointer<Factory> factory) : mFactory(factory)
 {
 
 }
@@ -149,17 +150,8 @@ void DatabaseContent::removeEntry(Entry *entry)
     }
 }
 
-void DatabaseContent::setFactory(QSharedPointer<DatabaseFactory> factory)
+void DatabaseContent::setFactory(QSharedPointer<Factory> factory)
 {
     mFactory.swap(factory);
 }
 
-DatabaseFactory::~DatabaseFactory()
-{
-
-}
-
-Entry *DatabaseFactory::createEntry()
-{
-    return new Entry();
-}

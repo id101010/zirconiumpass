@@ -19,7 +19,7 @@ void AbstractValue::setName(const QString &name)
 QJsonObject AbstractValue::saveToJson() const
 {
     QJsonObject val;
-    val["type"] = QVariant::fromValue<AbstractValue::Type>(this->type()).toString().toLower(); //Convert enum to lowercase string
+    val["type"] = QVariant::fromValue<AbstractValue::Type>(this->type()).toString(); //Convert enum to string
     val["name"] = this->name();
 
     return val;

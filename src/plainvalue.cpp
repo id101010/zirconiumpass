@@ -43,7 +43,7 @@ bool PlainValue::loadFromJson(const QJsonObject &obj)
 
 AbstractValue::Type PlainValue::type() const
 {
-    return AbstractValue::Type::Plain;
+    return AbstractValue::Type::plain;
 }
 
 

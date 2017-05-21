@@ -11,8 +11,8 @@ class AbstractValue : public JsonSerializable
         QString mName;
     public:
         enum class Type {
-            Encrypted,
-            Plain
+            encrypted,
+            plain
         };
         Q_ENUM(Type)
 

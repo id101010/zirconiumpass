@@ -8,7 +8,7 @@
 
 static const int VERSION = 1;
 
-Database::Database() : mDatabaseContent(QSharedPointer<DatabaseFactory>::create())
+Database::Database() : mFactory(QSharedPointer<Factory>::create()), mDatabaseContent(mFactory)
 {
 
 }
@@ -179,9 +179,15 @@ const QByteArray &Database::protectedStreamKey() const
     return mProtectedStreamKey;
 }
 
-void Database::setFactory(QSharedPointer<DatabaseFactory> factory)
+void Database::setFactory(QSharedPointer<Factory> factory)
 {
     mDatabaseContent.setFactory(factory);
+    mFactory = factory;
+}
+
+QSharedPointer<Factory> Database::factory() const
+{
+    return mFactory;
 }
 
 /**

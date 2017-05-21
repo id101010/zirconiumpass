@@ -20,11 +20,15 @@ private slots:
     void testMultiEntryCreateLoad();
 
 private:
-    QSharedPointer<DatabaseFactory> factory;
+    QSharedPointer<Factory> factory;
 
 private:
    class DummyEntry : public Entry {
    public:
+       DummyEntry(QSharedPointer<Factory> factory) : Entry(factory){
+
+       }
+
        virtual QJsonObject saveToJson() const override
        {
            return jsonobject;
@@ -39,10 +43,10 @@ private:
    };
 
 
-   class Factory : public DatabaseFactory  {
+   class TestFactory : public Factory {
    public:
        virtual Entry *createEntry() override {
-           return new DummyEntry();
+           return new DummyEntry(this->sharedFromThis());
        }
    };
 
