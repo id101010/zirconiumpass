@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QTableView>
 #include <QMenu>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,6 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView,&QTableView::customContextMenuRequested,this,&MainWindow::tableContextMenuRequested);
     connect(ui->tableView,&QTableView::doubleClicked, this, &MainWindow::entryDoubleClicked);
+
+    ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested,this,&MainWindow::tableHeaderContextMenuRequested);
 }
 
 MainWindow::~MainWindow()
@@ -105,6 +109,32 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
     }
 }
 
+void MainWindow::tableHeaderContextMenuRequested(const QPoint &pos)
+{
+    int column=ui->tableView->horizontalHeader()->logicalIndexAt(pos);
+
+    QMenu m;
+    QAction* removeAction = m.addAction("Remove Column");
+    QAction* addAction = m.addAction("Add new Column....");
+
+
+    if(column <= 0 || column >= mEntriesModel.columnCount({})) {
+        removeAction->setEnabled(false);
+    }
+
+    QAction* selectedAction = m.exec(ui->tableView->horizontalHeader()->mapToGlobal(pos));
+    if(selectedAction == removeAction) {
+        mEntriesModel.removeColumnAt(column);
+    } else if(selectedAction == addAction) {
+        QString valueName = QInputDialog::getText(this,"Add column", "Value name");
+        if(!valueName.trimmed().isEmpty()) {
+            mEntriesModel.addColumn(valueName);
+        }
+    }
+}
+
+
+
 void MainWindow::entryDoubleClicked(const QModelIndex &index)
 {
     if(index.isValid()) {
@@ -113,6 +143,7 @@ void MainWindow::entryDoubleClicked(const QModelIndex &index)
         }
     }
 }
+
 
 void MainWindow::editEntry(Entry *entry)
 {

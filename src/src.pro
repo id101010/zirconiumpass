@@ -54,9 +54,6 @@ SOURCES +=  crypto/CryptoHash.cpp \
             crypto/LayeredStream.cpp
 
 
-            #crypto/SymmetricCipherSalsa20.cpp \
-
-
 HEADERS+=   crypto/Crypto.h \
             crypto/CryptoHash.h \
             crypto/Random.h \
@@ -66,8 +63,6 @@ HEADERS+=   crypto/Crypto.h \
             crypto/Uuid.h \
             crypto/SymmetricCipherStream.h \
             crypto/LayeredStream.h
-#            crypto/SymmetricCipherSalsa20.h \
-
 DESTDIR = $$PWD/../build/
 
 LIBS+= -lgcrypt

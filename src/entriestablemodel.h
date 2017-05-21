@@ -19,6 +19,10 @@ public:
 
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+
+    void removeColumnAt(int ind);
+    void addColumn(const QString& key);
 private slots:
     void entryAdded(int ind);
     void entryRemoved(int ind);

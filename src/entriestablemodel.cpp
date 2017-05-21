@@ -3,11 +3,12 @@
 #include "entry.h"
 #include "abstractvalue.h"
 #include "plainvalue.h"
+#include <QSettings>
 
 EntriesTableModel::EntriesTableModel() : mDatabase(nullptr)
 {
-    mAdditionalColumns.append("password0");
-    mAdditionalColumns.append("url");
+    QSettings settings;
+    mAdditionalColumns =  settings.value("maincolumns", (QStringList() << "password0" << "url" )).toStringList();
 }
 
 EntriesTableModel::~EntriesTableModel()
@@ -78,14 +79,36 @@ QVariant EntriesTableModel::headerData(int section, Qt::Orientation orientation,
     }
 }
 
+void EntriesTableModel::removeColumnAt(int ind)
+{
+    if(ind>0 && ind < columnCount({})) {
+        beginRemoveColumns({},ind,ind);
+        mAdditionalColumns.removeAt(ind-1);
+        endRemoveColumns();
+
+        QSettings settings;
+        settings.setValue("maincolumns", mAdditionalColumns);
+    }
+}
+
+void EntriesTableModel::addColumn(const QString &key)
+{
+    beginInsertColumns({},columnCount({}),columnCount({}));
+    mAdditionalColumns.append(key);
+    endInsertColumns();
+
+    QSettings settings;
+    settings.setValue("maincolumns", mAdditionalColumns);
+}
+
 void EntriesTableModel::entryAdded(int ind)
 {
-    beginInsertRows(QModelIndex(),ind,ind);
+    beginInsertRows({},ind,ind);
     endInsertRows();
 }
 
 void EntriesTableModel::entryRemoved(int ind)
 {
-    beginRemoveRows(QModelIndex(),ind,ind);
+    beginRemoveRows({},ind,ind);
     endRemoveRows();
 }
