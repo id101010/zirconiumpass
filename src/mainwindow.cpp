@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested,this,&MainWindow::tableHeaderContextMenuRequested);
+
+    connect(ui->tableView->selectionModel(),&QItemSelectionModel::selectionChanged, this, &MainWindow::selectionChanged);
+
 }
 
 MainWindow::~MainWindow()
@@ -73,6 +77,8 @@ bool MainWindow::closeDatabaseClicked()
         mDatabase.reset();
         ui->actionClose->setEnabled(false);
         ui->actionSave->setEnabled(false);
+        ui->actionEdit_Entry->setEnabled(false);
+        ui->actionDelete_Entry->setEnabled(false);
         ui->actionCreateNewEntry->setEnabled(false);
         unsavedChanges = false;
     }
@@ -114,6 +120,18 @@ void MainWindow::saveDatabaseClicked()
         mDatabase->write("test.db"); //TODO: use dynamic save path
         unsavedChanges = false;
     }
+}
+
+void MainWindow::editEntryClicked()
+{
+    Entry* selectedEntry = mEntriesModel.data(mEntriesModel.index(ui->tableView->currentIndex().row(),0,{}),Qt::UserRole).value<Entry*>();
+    editEntry(selectedEntry);
+}
+
+void MainWindow::deleteEntryClicked()
+{
+     Entry* selectedEntry = mEntriesModel.data(mEntriesModel.index(ui->tableView->currentIndex().row(),0,{}),Qt::UserRole).value<Entry*>();
+     deleteEntry(selectedEntry);
 }
 
 
@@ -167,8 +185,7 @@ void MainWindow::tableContextMenuRequested(const QPoint &pos)
     if(selectedAction == editAction) {
         editEntry(selectedEntry);
     } else if(selectedAction == removeAction) {
-        mDatabase->databaseContent().removeEntry(selectedEntry);
-        unsavedChanges = true;
+        deleteEntry(selectedEntry);
     } else if(selectedAction == copyAction ) {
         EntryDialog::copyToClipboard(selectedValue,mDatabase.get());
     }
@@ -196,6 +213,13 @@ void MainWindow::tableHeaderContextMenuRequested(const QPoint &pos)
             mEntriesModel.addColumn(valueName);
         }
     }
+}
+
+void MainWindow::selectionChanged(const QItemSelection &selected)
+{
+    bool someEntriesSelected = !selected.empty();
+    ui->actionEdit_Entry->setEnabled(someEntriesSelected);
+    ui->actionDelete_Entry->setEnabled(someEntriesSelected);
 }
 
 
@@ -231,6 +255,14 @@ void MainWindow::editEntry(Entry *entry)
     }
 }
 
+void MainWindow::deleteEntry(Entry* entry) {
+    if(entry != nullptr) {
+        if(QMessageBox::warning(this,"Really delete?", "Do you really want to permanently delete the entry '"+entry->title()+"' ?",QMessageBox::Yes|QMessageBox::No,QMessageBox::Yes) == QMessageBox::Yes) {
+            mDatabase->databaseContent().removeEntry(entry);
+            unsavedChanges = true;
+        }
+    }
+}
 
 
 

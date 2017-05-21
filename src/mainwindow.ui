@@ -16,7 +16,14 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QTableView" name="tableView"/>
+     <widget class="QTableView" name="tableView">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -31,7 +38,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Database</string>
+     <string>&amp;Database</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionCreate_New"/>
@@ -42,7 +49,7 @@
    </widget>
    <widget class="QMenu" name="menuEntry">
     <property name="title">
-     <string>E&amp;ntry</string>
+     <string>&amp;Entry</string>
     </property>
     <addaction name="actionCreateNewEntry"/>
     <addaction name="actionEdit_Entry"/>
@@ -74,7 +81,7 @@
   </action>
   <action name="actionCreate_New">
    <property name="text">
-    <string>&amp;Create New</string>
+    <string>Create &amp;New</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -82,7 +89,7 @@
   </action>
   <action name="actionClose">
    <property name="text">
-    <string>C&amp;lose</string>
+    <string>&amp;Close</string>
    </property>
   </action>
   <action name="actionQuit_Zirconiumpass">
@@ -99,7 +106,7 @@
   </action>
   <action name="actionCreateNewEntry">
    <property name="text">
-    <string>Create New</string>
+    <string>Create N&amp;ew</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
@@ -107,17 +114,23 @@
   </action>
   <action name="actionEdit_Entry">
    <property name="text">
-    <string>Edit Entry</string>
+    <string>Edit selected Ent&amp;ry</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
    </property>
   </action>
   <action name="actionDelete_Entry">
    <property name="text">
-    <string>Delete Entry</string>
+    <string>&amp;Delete selected Entry</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -223,6 +236,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionEdit_Entry</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editEntryClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>601</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDelete_Entry</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>deleteEntryClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>601</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openDatabaseClicked()</slot>
@@ -230,5 +275,7 @@
   <slot>createNewDatabaseClicked()</slot>
   <slot>createNewEntryClicked()</slot>
   <slot>saveDatabaseClicked()</slot>
+  <slot>editEntryClicked()</slot>
+  <slot>deleteEntryClicked()</slot>
  </slots>
 </ui>

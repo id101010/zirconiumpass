@@ -19,14 +19,19 @@ public:
     ~MainWindow();
 
 public slots:
+    //Menu action slots
     void openDatabaseClicked();
     bool closeDatabaseClicked();
     void createNewDatabaseClicked();
     void createNewEntryClicked();
     void saveDatabaseClicked();
+    void editEntryClicked();
+    void deleteEntryClicked();
+
     void tableContextMenuRequested(const QPoint &pos);
     void entryDoubleClicked(const QModelIndex& index);
     void tableHeaderContextMenuRequested(const QPoint &pos);
+    void selectionChanged(const class QItemSelection& selected);
 
 private:
     Ui::MainWindow *ui;
@@ -35,7 +40,7 @@ private:
     std::unique_ptr<Database> mDatabase;
 
     void editEntry(Entry* entry);
-
+    void deleteEntry(Entry *entry);
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
 };
