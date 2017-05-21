@@ -104,19 +104,17 @@ QJsonObject CryptedValue::saveToJson() const
 
 bool CryptedValue::loadFromJson(const QJsonObject &obj)
 {
+    if(!AbstractValue::loadFromJson(obj)) {
+        return false;
+    }
+
+
     QJsonArray cryptArr;
     QByteArray cryptBytes;
 
     /* try to load encrypted bytearray from json */
     if(obj["cryptedValue"].isArray()){
         cryptArr = obj["cryptedValue"].toArray();
-    } else {
-        return false;
-    }
-
-    /* try to load name */
-    if(obj["name"].isString()){
-        this->setName(obj["name"].toString());
     } else {
         return false;
     }

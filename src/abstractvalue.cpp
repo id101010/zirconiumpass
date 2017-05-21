@@ -1,4 +1,5 @@
 #include "abstractvalue.h"
+#include <QMetaEnum>
 #include <QVariant>
 
 AbstractValue::AbstractValue()
@@ -27,6 +28,28 @@ QJsonObject AbstractValue::saveToJson() const
 
 bool AbstractValue::loadFromJson(const QJsonObject &obj)
 {
-    //TODO Aaron: Move common stuff from subclasses here
+    /* try to load name */
+    if(obj["name"].isString()){
+        setName(obj["name"].toString());
+    } else {
+        return false;
+    }
+
+    /* validate that type equals to the type provided by the current instance subclass */
+
+    QMetaEnum me = QMetaEnum::fromType<Type>();
+    bool castOk = false;
+
+    //Convert type string into enum using QMetaEnum reflection magic
+    Type typeInJson = static_cast<Type>(me.keyToValue(obj["type"].toString().toStdString().c_str(),&castOk));
+    if(!castOk) {
+        return false;
+    }
+
+    if(typeInJson != type()) {
+        return false;
+    }
+
+    return true;
 }
 

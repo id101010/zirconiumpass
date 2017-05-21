@@ -24,16 +24,13 @@ QJsonObject PlainValue::saveToJson() const
 
 bool PlainValue::loadFromJson(const QJsonObject &obj)
 {
-    /* try to load plainValue */
-    if(obj["plainValue"].isString()){
-        mValue = obj["plainValue"].toString();
-    } else {
+    if(!AbstractValue::loadFromJson(obj)) {
         return false;
     }
 
-    /* try to load name */
-    if(obj["name"].isString()){
-        this->setName(obj["name"].toString());
+    /* try to load plainValue */
+    if(obj["plainValue"].isString()){
+        mValue = obj["plainValue"].toString();
     } else {
         return false;
     }
