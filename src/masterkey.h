@@ -4,6 +4,9 @@
 #include <QByteArray>
 #include <QString>
 
+/**
+ * @brief The Masterkey class provides key-derivation and encrypt/decrypt facilities
+ */
 class Masterkey
 {
     public:

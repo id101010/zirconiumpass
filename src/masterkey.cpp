@@ -9,6 +9,8 @@ Masterkey::Masterkey()
 
 }
 
+//basic master key setter/getters ahead
+
 int Masterkey::transformRounds() const
 {
     return mTransformRounds;
@@ -39,6 +41,12 @@ QByteArray Masterkey::masterSeed() const
     return mMasterSeed;
 }
 
+
+/**
+ * @brief Derives the masterkey from the passed password
+ * @param password
+ * @return
+ */
 bool Masterkey::deriveKey(QString password)
 {
     //based on https://gist.github.com/msmuenchen/9318327
@@ -86,6 +94,14 @@ bool Masterkey::deriveKey(QString password)
     return true;
 }
 
+
+/**
+ * @brief Encrypt the passed data with the masterkey
+ * @param iv initialization vector
+ * @param content data to encrypt
+ * @param outEncrypted where to write the encrypted data to
+ * @return True on success
+ */
 bool Masterkey::encrypt(const QByteArray& iv, const QByteArray& content, QByteArray& outEncrypted) const
 {
     QBuffer buf(&outEncrypted);
@@ -116,6 +132,13 @@ bool Masterkey::encrypt(const QByteArray& iv, const QByteArray& content, QByteAr
 }
 
 
+/**
+ * @brief Decrypt the passed data using the master key
+ * @param iv initialization vector
+ * @param encryptedContent encrypted data
+ * @param outDecrypted where to store the decrypted data
+ * @return True on success
+ */
 bool Masterkey::decrypt(const QByteArray& iv, const QByteArray& encryptedContent, QByteArray& outDecrypted) const
 {
     QBuffer buf;

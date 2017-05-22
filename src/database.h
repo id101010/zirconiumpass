@@ -7,16 +7,17 @@
 #include <memory>
 
 
-
-
-
+/**
+ * @brief The Database class provides the entrypoint to serialize/deserialize a custom database file format
+ */
 class Database
 {
     public:
-        static std::unique_ptr<Database> createFromFile(QString filename);
-        static std::unique_ptr<Database> createNew(QString password, int rounds = 100000);
-        bool decrypt(QString password);
-        bool write(QString filename);
+        static std::unique_ptr<Database> createFromFile(const QString& filename);
+        static std::unique_ptr<Database> createNew(const QString& password, int rounds = 100000);
+
+        bool decrypt(const QString &password);
+        bool write(const QString& filename);
 
         DatabaseContent& databaseContent();
         const DatabaseContent& databaseContent() const;

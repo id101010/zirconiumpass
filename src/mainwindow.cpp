@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow), unsavedChanges(false)
 {
+    //Ui init
     ui->setupUi(this);
     ui->actionClose->setEnabled(false);
     ui->actionCreateNewEntry->setEnabled(false);
@@ -22,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionSave->setEnabled(false);
     ui->tableView->setModel(&mEntriesModel);
 
+    //Connect tableview
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView,&QTableView::customContextMenuRequested,this,&MainWindow::tableContextMenuRequested);
     connect(ui->tableView,&QTableView::doubleClicked, this, &MainWindow::entryDoubleClicked);

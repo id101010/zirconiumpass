@@ -6,6 +6,9 @@
 #include <QByteArray>
 #include <functional>
 
+/**
+ * @brief The CryptedValue class stores a encrypted AbstractValue
+ */
 class CryptedValue : public AbstractValue
 {
     public:

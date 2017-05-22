@@ -9,6 +9,10 @@ namespace Ui {
 class DatabaseDialog;
 }
 
+
+/**
+ * @brief The DatabaseDialog class serves as dialog to open or create a database
+ */
 class DatabaseDialog : public QDialog
 {
     Q_OBJECT
@@ -16,16 +20,16 @@ class DatabaseDialog : public QDialog
 public:
     explicit DatabaseDialog(QWidget *parent = 0);
     ~DatabaseDialog();
-    std::unique_ptr<Database> database();
-
 
     enum class Mode {
         Open, CreateNew
     };
 
     void setMode(Mode m);
-    QString filename() const;
 
+
+    QString filename() const;
+    std::unique_ptr<Database> database();
 
 
 private slots:

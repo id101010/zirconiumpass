@@ -9,17 +9,23 @@ namespace Ui {
 class EntryDialog;
 }
 
+/**
+ * @brief The EntryDialog class serves as dialog to edit/create a new Entry and modify its properties
+ */
 class EntryDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     explicit EntryDialog(class Database *database);
+
     Entry* entry();
     void setEntry(Entry* entry);
-    ~EntryDialog();
-    static void copyToClipboard(class AbstractValue* abstractValue, class Database* database);
 
+    ~EntryDialog();
+
+
+    static void copyToClipboard(class AbstractValue* abstractValue, class Database* database);
 private:
     Ui::EntryDialog *ui;
     Entry* mEntry;

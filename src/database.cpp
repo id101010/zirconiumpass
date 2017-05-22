@@ -9,7 +9,7 @@
 static const int VERSION = 1;
 
 /**
- * @brief Constructor for this class.
+ * @brief Creates a unintialized database. This method is Private and for internal use only
  */
 Database::Database() : mFactory(QSharedPointer<Factory>::create()), mDatabaseContent(mFactory)
 {
@@ -17,10 +17,11 @@ Database::Database() : mFactory(QSharedPointer<Factory>::create()), mDatabaseCon
 }
 
 /**
- * @brief Decrypt and parse a pass database stored as file
- * @param filename
+ * @brief Create a database instance from a existing database file.
+ * @param filename absolut file name
+ * @return A unique_ptr to the loaded database
  **/
-std::unique_ptr<Database> Database::createFromFile(QString filename)
+std::unique_ptr<Database> Database::createFromFile(const QString &filename)
 {
     char magic[14]; // magic number
     qint32 version; // version
@@ -87,9 +88,9 @@ std::unique_ptr<Database> Database::createFromFile(QString filename)
 /**
  * @brief Create a new, empty and initialized database object
  * @param password Password for the database encryption
- * @param rounds Number of encryption rounds
+ * @param rounds Number of Key-Transformation rounds
  **/
-std::unique_ptr<Database> Database::createNew(QString password, int rounds)
+std::unique_ptr<Database> Database::createNew(const QString &password, int rounds)
 {
     std::unique_ptr<Database> d(new Database()); // create new database
 
@@ -114,10 +115,11 @@ std::unique_ptr<Database> Database::createNew(QString password, int rounds)
 }
 
 /**
- * @brief Decrypt pass database object
- * @param password
+ * @brief Decrypt the database content
+ * @param password masterpassword
+ * @return true on success
  **/
-bool Database::decrypt(QString password)
+bool Database::decrypt(const QString& password)
 {
 
     bool keycheck = mMasterKey.deriveKey(password); // derive key
@@ -134,9 +136,10 @@ bool Database::decrypt(QString password)
 
 /**
  * @brief Write encrypted pass database object to file
- * @param filename
+ * @param filename absolute file name
+ * @return true on success
  **/
-bool Database::write(QString filename)
+bool Database::write(const QString& filename)
 {
 
     if(!encrypt()) {
@@ -187,7 +190,7 @@ const DatabaseContent& Database::databaseContent() const
 }
 
 /**
- * @brief Returns the protected stream key
+ * @brief Returns the protected stream key, used to decrypt the actual passwords from the JSON
  */
 const QByteArray &Database::protectedStreamKey() const
 {
@@ -195,8 +198,8 @@ const QByteArray &Database::protectedStreamKey() const
 }
 
 /**
- * @brief Set Factory using a pointer to it
- * @param factory Pointer
+ * @brief Set Factory (used for testing)
+ * @param factory
  */
 void Database::setFactory(QSharedPointer<Factory> factory)
 {
@@ -205,7 +208,7 @@ void Database::setFactory(QSharedPointer<Factory> factory)
 }
 
 /**
- * @brief Returns a pointer to the local factory
+ * @brief Returns a pointer to the used factory
  */
 QSharedPointer<Factory> Database::factory() const
 {

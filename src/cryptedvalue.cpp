@@ -14,10 +14,9 @@ CryptedValue::CryptedValue()
 }
 
 /**
- * @brief Decrypt the crypted member of this class by providing a lambda function which handles the decryption.
- *        The memorysector is protected and gets filled with zeros after the decryption has happened.
+ * @brief Temporarily decrypt the value and show it to the passed lambda function before overwriting the memory region again
  * @param streamkey Key used to decrypt
- * @param function Lambdafunction for decryption
+ * @param function Lambdafunction that should be called with the result
  */
 void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (const QString&)> visitor)
 {
@@ -30,7 +29,7 @@ void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (cons
             return;
         }
 
-        QByteArray iv ="E830094B97205D2A";
+        QByteArray iv ="E830094B97205D2A"; //constant iv
         iv = QByteArray::fromHex(iv);
 
         SymmetricCipherStream stream(&buf,SymmetricCipher::Salsa20,SymmetricCipher::Stream, SymmetricCipher::Decrypt);
@@ -63,9 +62,9 @@ void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (cons
 }
 
 /**
- * @brief Takes a value and encrypts it
+ * @brief Sets a new value
  * @param streamkey Key used to encrypt
- * @param value Value to encrypt
+ * @param value new Value to set
  */
 void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
 {
@@ -104,7 +103,7 @@ void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
 }
 
 /**
- * @brief Returns a JSON Object of this cryptedvalue object
+ * @brief Serializes the instance to a JSON Object
  */
 QJsonObject CryptedValue::saveToJson() const
 {
@@ -120,7 +119,7 @@ QJsonObject CryptedValue::saveToJson() const
 }
 
 /**
- * @brief Load a cryptedvalue object from a JSON object
+ * @brief Restore the cryptedvalue from a JSON object
  */
 bool CryptedValue::loadFromJson(const QJsonObject &obj)
 {
@@ -171,7 +170,7 @@ bool CryptedValue::isEmpty() const
 }
 
 /**
- * @brief Displays eigther stars or <empty> depending on the member mValue
+ * @brief Returns a display representation of the value. The display representation will never show the actual password
  */
 QString CryptedValue::displayValue() const
 {

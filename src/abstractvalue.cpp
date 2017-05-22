@@ -2,16 +2,14 @@
 #include <QMetaEnum>
 #include <QVariant>
 
-/**
- * @brief Constructor for this class.
- */
+
 AbstractValue::AbstractValue()
 {
 
 }
 
 /**
- * @brief Returns the name of this abstract value.
+ * @brief Returns the name of the value.
  */
 const QString &AbstractValue::name() const
 {
@@ -19,7 +17,7 @@ const QString &AbstractValue::name() const
 }
 
 /**
- * @brief Sets the name of this abstract value.
+ * @brief Sets the name of the value.
  * @param name
  */
 void AbstractValue::setName(const QString &name)
@@ -40,8 +38,9 @@ QJsonObject AbstractValue::saveToJson() const
 }
 
 /**
- * @brief Load an abstract vale from a JSON Object
+ * @brief Restores a Value from a JSON Object
  * @param JSON Object
+ * @return true on success
  */
 bool AbstractValue::loadFromJson(const QJsonObject &obj)
 {

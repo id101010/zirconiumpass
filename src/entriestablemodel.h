@@ -2,6 +2,11 @@
 #define ENTRIESTABLEMODEL_H
 
 #include <QAbstractTableModel>
+
+
+/**
+ * @brief The EntriesTableModel class visualizes a table of Entry-Instances
+ */
 class EntriesTableModel : public QAbstractTableModel
 {
 public:

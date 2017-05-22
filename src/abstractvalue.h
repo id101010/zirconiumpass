@@ -4,6 +4,9 @@
 #include "jsonserializable.h"
 #include <QMetaType>
 
+/**
+ * @brief The AbstractValue class stores one value of an entry (e.g  a password or a note)
+ */
 class AbstractValue : public JsonSerializable
 {
     Q_GADGET //needed for Q_ENUM

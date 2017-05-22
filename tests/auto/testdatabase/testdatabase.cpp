@@ -38,14 +38,14 @@ void TestDatabase::testSingleEntryCreateLoad()
     obj1["a"]= 13;
     obj1["b"] = 3.141;
     obj1["c"] = "hallo";
-    DummyEntry dummy1(factory);
-    dummy1.jsonobject = obj1;
+    DummyEntry* dummy1 = new DummyEntry(factory);
+    dummy1->jsonobject = obj1;
 
     //Append dummy entry to Database content
     QVERIFY(d->databaseContent().entries().isEmpty());
-    d->databaseContent().addEntry(&dummy1);
+    d->databaseContent().addEntry(dummy1);
     QCOMPARE(d->databaseContent().entries().length(),1);
-    QCOMPARE(d->databaseContent().entries().first(),&dummy1);
+    QCOMPARE(d->databaseContent().entries().first(),dummy1);
 
     //Write Db.
     QVERIFY(d->write("test.db"));
@@ -65,6 +65,7 @@ void TestDatabase::testSingleEntryCreateLoad()
     QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Invalid padding.*"));
     QVERIFY(!r->decrypt("WRONGpassw0rd"));
     QVERIFY(r->databaseContent().entries().isEmpty());
+
 
 }
 
@@ -111,8 +112,6 @@ void TestDatabase::testMultiEntryCreateLoad()
     QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Invalid padding.*"));
     QVERIFY(!r->decrypt("WRONGpassw0rd"));
     QVERIFY(r->databaseContent().entries().isEmpty());
-
-    qDeleteAll(dummies);
 
 }
 

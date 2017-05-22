@@ -3,6 +3,9 @@
 
 #include <QJsonObject>
 
+/**
+ * @brief The JsonSerializable interface declares the basic serialize/deserialize operations for Serializable objects
+ */
 class JsonSerializable
 {
     public:

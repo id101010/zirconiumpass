@@ -15,24 +15,41 @@ Entry::Entry(QSharedPointer<Factory> factory) : mFactory(factory)
 
 Entry::~Entry()
 {
-
+    qDeleteAll(mValues);
 }
 
+/**
+ * @brief Returns the title of the entry
+ * @return
+ */
 const QString &Entry::title()
 {
     return mTitle;
 }
 
+/**
+ * @brief Sets a new title
+ * @param title
+ */
 void Entry::setTitle(const QString &title)
 {
     mTitle = title;
 }
 
+/**
+ * @brief Returns all values of the entry
+ * @return
+ */
 QVector<AbstractValue *> Entry::values()
 {
     return mValues;
 }
 
+/**
+ * @brief Searches for a value by its name
+ * @param name
+ * @return AbstractValue or nullptr if not found
+ */
 AbstractValue *Entry::valueByName(const QString &name)
 {
     for(int i = 0; i < mValues.size(); i++){
@@ -44,6 +61,10 @@ AbstractValue *Entry::valueByName(const QString &name)
     return nullptr;
 }
 
+/**
+ * @brief Remove a value by its name
+ * @param name
+ */
 void Entry::removeValueByName(const QString &name)
 {
     AbstractValue *objectToRemove = valueByName(name);
@@ -55,6 +76,11 @@ void Entry::removeValueByName(const QString &name)
     }
 }
 
+
+/**
+ * @brief Remove a value by reference
+ * @param value
+ */
 void Entry::removeValue(AbstractValue *value)
 {
     if(value != nullptr){
@@ -62,10 +88,15 @@ void Entry::removeValue(AbstractValue *value)
         if(ind != -1) {
             mValues.removeAt(ind);
             emit valueRemoved(ind);
+            delete value;
         }
     }
 }
 
+/**
+ * @brief Add a value to the Entry. Ownership is passed to entry
+ * @param value
+ */
 void Entry::addValue(AbstractValue *value)
 {
     Q_ASSERT(value!=nullptr);

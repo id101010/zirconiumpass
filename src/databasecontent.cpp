@@ -15,9 +15,15 @@ DatabaseContent::DatabaseContent(QSharedPointer<Factory> factory) : mFactory(fac
 
 }
 
+DatabaseContent::~DatabaseContent()
+{
+    qDeleteAll(mEntries);
+}
+
 /**
  * @brief Encrypt the database content with the master key
  * @param masterkey
+ * @return true on success
  */
 bool DatabaseContent::encrypt(const Masterkey &masterkey)
 {
@@ -47,6 +53,7 @@ bool DatabaseContent::encrypt(const Masterkey &masterkey)
 /**
  * @brief Decrypt the database content with the masterkey
  * @param masterkey
+ * @return true on success
  */
 bool DatabaseContent::decrypt(const Masterkey &masterkey)
 {
@@ -126,7 +133,7 @@ void DatabaseContent::setCrypted(const QByteArray &encryptedData)
 }
 
 /**
- * @brief Set the local encryption initialization vector
+ * @brief Set the encryption initialization vector
  * @param iv
  */
 void DatabaseContent::setEncryptionIv(const QByteArray &iv)
@@ -135,7 +142,7 @@ void DatabaseContent::setEncryptionIv(const QByteArray &iv)
 }
 
 /**
- * @brief Set the stream start bytes of the database header
+ * @brief Set the streamstartbytes of the content. Those are used to check if the correct password was provided
  * @param startBytes
  */
 void DatabaseContent::setStreamStartBytes(const QByteArray &startBytes)
@@ -144,7 +151,7 @@ void DatabaseContent::setStreamStartBytes(const QByteArray &startBytes)
 }
 
 /**
- * @brief Return encrypted entry
+ * @brief Return the encrypted representation of the database content
  */
 QByteArray DatabaseContent::crypted() const
 {
@@ -197,11 +204,12 @@ void DatabaseContent::removeEntry(Entry *entry)
     if(ind != -1){
         mEntries.removeAt(ind);
         emit entryRemoved(ind);
+        delete entry;
     }
 }
 
 /**
- * @brief Set a factory
+ * @brief Set factory
  * @param factory
  */
 void DatabaseContent::setFactory(QSharedPointer<Factory> factory)

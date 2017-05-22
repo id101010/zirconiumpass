@@ -6,11 +6,15 @@
 #include <QSharedPointer>
 #include "entry.h"
 
+/**
+ * @brief The DatabaseContent class contains the encrypted/decrypted JSON representation of the database
+ */
 class DatabaseContent : public QObject
 {
     Q_OBJECT
 public:
     DatabaseContent(QSharedPointer<Factory> factory);
+    ~DatabaseContent();
 
     bool encrypt(const Masterkey& masterkey);
     bool decrypt(const Masterkey& masterkey);
@@ -26,8 +30,6 @@ public:
     QByteArray streamStartBytes() const;
 
     const QVector<class Entry *> &entries() const;
-
-
     void addEntry(Entry *entry);
     void removeEntry(Entry* entry);
 

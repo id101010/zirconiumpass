@@ -11,19 +11,27 @@
 #include <QObject>
 #include <QSharedPointer>
 
+
+/**
+ * @brief The Entry class stores a Entry of a Database. An entry has a Title and one or multiple values
+ */
 class Entry : public QObject, public JsonSerializable
 {
     Q_OBJECT
     public:
         Entry(QSharedPointer<Factory> factory);
         virtual ~Entry();
+
         const QString& title();
         void setTitle(const QString &title);
+
         QVector<AbstractValue*> values();
         AbstractValue* valueByName(const QString& name);
+
         void removeValueByName(const QString& name);
         void removeValue(AbstractValue* value);
         void addValue(AbstractValue* value);
+
         virtual QJsonObject saveToJson() const override;
         virtual bool loadFromJson(const QJsonObject &obj) override;
     private:

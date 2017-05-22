@@ -2,6 +2,12 @@
 #define VALUESTABLEMODEL_H
 
 #include <QAbstractTableModel>
+
+
+
+/**
+ * @brief The ValuesTableModel class Visualizes a list of AbstractValues (belonging to the same Entry)
+ */
 class ValuesTableModel : public QAbstractTableModel
 {
 public:
