@@ -105,6 +105,10 @@ void Entry::addValue(AbstractValue *value)
 }
 
 
+/**
+ * @brief Serializes the Entry to a JsonObject
+ * @return
+ */
 QJsonObject Entry::saveToJson() const
 {
     QJsonObject entry; // root object
@@ -127,6 +131,11 @@ QJsonObject Entry::saveToJson() const
     return entry;
 }
 
+/**
+ * @brief Restores the entry from a JsonObject
+ * @param obj
+ * @return
+ */
 bool Entry::loadFromJson(const QJsonObject &obj)
 {
     /* Load title from json */
