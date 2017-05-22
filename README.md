@@ -3,6 +3,12 @@ A simple password manager written in C++
 
 ![Hauptfenster](./doc/main.png)
 
+## Dokumentation
+
+* [Dokumentation(PDF)](./doc/20170521_Dokumentation_Zirconiumpass.pdf)  
+* [Diagramme und Screenshots](./doc/index.md)
+
+
 
 ## Build dependencies
 
