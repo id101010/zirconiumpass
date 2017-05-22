@@ -1,0 +1,59 @@
+title Sequenzdiagram Datenbank Laden
+
+StartDialog->+App: DialogOk
+App->+*Database: createNew("Filename.zdb")
+
+Database->+*DatabaseContent: DatabaseContent()
+Database->DatabaseContent: setEncryptionIV()
+Database->DatabaseContent: setStreamStartBytes()
+Database->-DatabaseContent: setCrypted()
+deactivate DatabaseContent
+
+App->+Database: decrypt("1234")
+Database->+*Masterkey: Masterkey()
+Database->Masterkey: deriveKey(...)
+deactivate Masterkey
+
+Database->+DatabaseContent: decrypt(masterkey)
+
+DatabaseContent->+*Entry: Entry()
+DatabaseContent->Entry: loadFromJSON()
+
+Entry->+*CryptedValue:CryptedValue()
+Entry->CryptedValue:loadFromJSON()
+
+------------------------------------------------------
+
+title Sequenzdiagram Datenbank neu Erstellen, Eintrag anlegen und speichern
+
+StartDialog->+App: DialogOk()
+App->+*Database: createNew(password)
+
+Database->+*Masterkey: deriveKey(password,tseed,12,mseed)
+deactivate Masterkey
+Database->+*DatabaseContent: DatabaseContent()
+Database->-DatabaseContent: setEncryptionIV(iv)
+deactivate DatabaseContent
+deactivate App
+
+StartDialog->+App: addEntry()
+App->+*Entry: Entry()
+App->Entry: setTitle("www.google.com")
+deactivate Entry
+
+App->+*CryptedValue: CryptedValue()
+App->CryptedValue: setValue(streamkey, "pw_google")
+App->+Entry: addValue(value1)
+App->+DatabaseContent: addEntry(entry1)
+deactivate App
+deactivate DatabaseContent
+deactivate Entry
+deactivate CryptedValue
+
+StartDialog->+App: saveExit()
+App->+Database: write("file")
+Database->+Database: encrypt()
+Database->+DatabaseContent: encrypt(masterkey)
+DatabaseContent->+Entry: saveToJSON()
+Entry->+CryptedValue: saveToJSON()
+
