@@ -5,11 +5,20 @@
 #include "crypto/SymmetricCipherStream.h"
 #include <QDebug>
 
+/**
+ * @brief Constructor for this class.
+ */
 CryptedValue::CryptedValue()
 {
 
 }
 
+/**
+ * @brief Decrypt the crypted member of this class by providing a lambda function which handles the decryption.
+ *        The memorysector is protected and gets filled with zeros after the decryption has happened.
+ * @param streamkey Key used to decrypt
+ * @param function Lambdafunction for decryption
+ */
 void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (const QString&)> visitor)
 {
     QByteArray outDecrypted;
@@ -53,6 +62,11 @@ void CryptedValue::decrypt(const QByteArray &streamkey, std::function<void (cons
     outDecrypted.fill('0');
 }
 
+/**
+ * @brief Takes a value and encrypts it
+ * @param streamkey Key used to encrypt
+ * @param value Value to encrypt
+ */
 void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
 {
     if(value.isEmpty()) {
@@ -89,6 +103,9 @@ void CryptedValue::setValue(const QByteArray &streamkey, const QString &value)
     mValue = newCryptedValue;
 }
 
+/**
+ * @brief Returns a JSON Object of this cryptedvalue object
+ */
 QJsonObject CryptedValue::saveToJson() const
 {
     QJsonObject val = AbstractValue::saveToJson();
@@ -102,6 +119,9 @@ QJsonObject CryptedValue::saveToJson() const
     return val;
 }
 
+/**
+ * @brief Load a cryptedvalue object from a JSON object
+ */
 bool CryptedValue::loadFromJson(const QJsonObject &obj)
 {
     if(!AbstractValue::loadFromJson(obj)) {
@@ -134,17 +154,25 @@ bool CryptedValue::loadFromJson(const QJsonObject &obj)
     return true;
 }
 
+/**
+ * @brief Returns the type of this object
+ */
 AbstractValue::Type CryptedValue::type() const
 {
     return AbstractValue::Type::encrypted;
 }
 
+/**
+ * @brief Returns true if the crypted value is empty
+ */
 bool CryptedValue::isEmpty() const
 {
     return mValue.isEmpty();
 }
 
-
+/**
+ * @brief Displays eigther stars or <empty> depending on the member mValue
+ */
 QString CryptedValue::displayValue() const
 {
     if(isEmpty()) {

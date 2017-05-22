@@ -6,11 +6,19 @@
 #include "entry.h"
 #include "factory.h"
 
+/**
+ * @brief Constructor for this class
+ * @param factory
+ */
 DatabaseContent::DatabaseContent(QSharedPointer<Factory> factory) : mFactory(factory)
 {
 
 }
 
+/**
+ * @brief Encrypt the database content with the master key
+ * @param masterkey
+ */
 bool DatabaseContent::encrypt(const Masterkey &masterkey)
 {
     if(mStreamStartBytes.isEmpty() || mEncryptionIv.isEmpty()) { //TODO: check that json != empty
@@ -36,6 +44,10 @@ bool DatabaseContent::encrypt(const Masterkey &masterkey)
     return masterkey.encrypt(mEncryptionIv,plain,mCrypted);
 }
 
+/**
+ * @brief Decrypt the database content with the masterkey
+ * @param masterkey
+ */
 bool DatabaseContent::decrypt(const Masterkey &masterkey)
 {
     // Step 1: Decrypt database and check for correct start of stream (using known bytes)
@@ -88,51 +100,85 @@ bool DatabaseContent::decrypt(const Masterkey &masterkey)
     return true;
 }
 
+/**
+ * @brief Returns the encryption state of the database content
+ */
 bool DatabaseContent::containsDecryptedData() const
 {
     return !mEntries.empty();
 }
 
+/**
+ * @brief Clear all entries
+ */
 void DatabaseContent::clearDecryptedData()
 {
     mEntries.clear();
 }
 
+/**
+ * @brief Set encrypted data
+ * @param encryptedData
+ */
 void DatabaseContent::setCrypted(const QByteArray &encryptedData)
 {
     mCrypted = encryptedData;
 }
 
+/**
+ * @brief Set the local encryption initialization vector
+ * @param iv
+ */
 void DatabaseContent::setEncryptionIv(const QByteArray &iv)
 {
     mEncryptionIv = iv;
 }
 
+/**
+ * @brief Set the stream start bytes of the database header
+ * @param startBytes
+ */
 void DatabaseContent::setStreamStartBytes(const QByteArray &startBytes)
 {
     mStreamStartBytes = startBytes;
 }
 
+/**
+ * @brief Return encrypted entry
+ */
 QByteArray DatabaseContent::crypted() const
 {
     return mCrypted;
 }
 
+/**
+ * @brief Return encryption initialization vector
+ */
 QByteArray DatabaseContent::encryptionIv() const
 {
     return mEncryptionIv;
 }
 
+/**
+ * @brief Return stream start bytes
+ */
 QByteArray DatabaseContent::streamStartBytes() const
 {
     return mStreamStartBytes;
 }
 
+/**
+ * @brief Returns a vector with all database entries
+ */
 const QVector<Entry *> &DatabaseContent::entries() const
 {
     return mEntries;
 }
 
+/**
+ * @brief Add a new entry to the database
+ * @param entry
+ */
 void DatabaseContent::addEntry(Entry *entry)
 {
     Q_ASSERT(entry!=nullptr);
@@ -140,6 +186,10 @@ void DatabaseContent::addEntry(Entry *entry)
     emit entryAdded(mEntries.size()-1);
 }
 
+/**
+ * @brief Removes an entry from the database
+ * @param entry
+ */
 void DatabaseContent::removeEntry(Entry *entry)
 {
     Q_ASSERT(entry!=nullptr);
@@ -150,6 +200,10 @@ void DatabaseContent::removeEntry(Entry *entry)
     }
 }
 
+/**
+ * @brief Set a factory
+ * @param factory
+ */
 void DatabaseContent::setFactory(QSharedPointer<Factory> factory)
 {
     mFactory.swap(factory);

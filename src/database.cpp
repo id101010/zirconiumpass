@@ -8,13 +8,17 @@
 
 static const int VERSION = 1;
 
+/**
+ * @brief Constructor for this class.
+ */
 Database::Database() : mFactory(QSharedPointer<Factory>::create()), mDatabaseContent(mFactory)
 {
 
 }
 
 /**
- * Decrypt and parse a pass database stored as file
+ * @brief Decrypt and parse a pass database stored as file
+ * @param filename
  **/
 std::unique_ptr<Database> Database::createFromFile(QString filename)
 {
@@ -81,15 +85,15 @@ std::unique_ptr<Database> Database::createFromFile(QString filename)
 }
 
 /**
- * Create a new, empty and initialized database object
+ * @brief Create a new, empty and initialized database object
+ * @param password Password for the database encryption
+ * @param rounds Number of encryption rounds
  **/
 std::unique_ptr<Database> Database::createNew(QString password, int rounds)
 {
     std::unique_ptr<Database> d(new Database()); // create new database
 
-
     d->mProtectedStreamKey = randomGen()->randomArray(32);
-
 
     d->mMasterKey = Masterkey();
     d->mMasterKey.setTransformSeed(randomGen()->randomArray(32));
@@ -110,7 +114,8 @@ std::unique_ptr<Database> Database::createNew(QString password, int rounds)
 }
 
 /**
- * Decrypt pass database object
+ * @brief Decrypt pass database object
+ * @param password
  **/
 bool Database::decrypt(QString password)
 {
@@ -128,7 +133,8 @@ bool Database::decrypt(QString password)
 }
 
 /**
- * Write encrypted pass database object to file
+ * @brief Write encrypted pass database object to file
+ * @param filename
  **/
 bool Database::write(QString filename)
 {
@@ -164,34 +170,50 @@ bool Database::write(QString filename)
     return true;
 }
 
+/**
+ * @brief Returns the database content
+ */
 DatabaseContent& Database::databaseContent()
 {
     return mDatabaseContent;
 }
 
+/**
+ * @brief Returns the database content as a constant value
+ */
 const DatabaseContent& Database::databaseContent() const
 {
     return mDatabaseContent;
 }
 
+/**
+ * @brief Returns the protected stream key
+ */
 const QByteArray &Database::protectedStreamKey() const
 {
     return mProtectedStreamKey;
 }
 
+/**
+ * @brief Set Factory using a pointer to it
+ * @param factory Pointer
+ */
 void Database::setFactory(QSharedPointer<Factory> factory)
 {
     mDatabaseContent.setFactory(factory);
     mFactory = factory;
 }
 
+/**
+ * @brief Returns a pointer to the local factory
+ */
 QSharedPointer<Factory> Database::factory() const
 {
     return mFactory;
 }
 
 /**
- * Encrypt pass database
+ * @brief Encrypt pass database
  **/
 bool Database::encrypt()
 {
