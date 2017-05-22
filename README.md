@@ -1,6 +1,8 @@
 # zirconiumpass
 A simple password manager written in C++
 
+![Hauptfenster](./doc/main.png)
+
 
 ## Build dependencies
 
